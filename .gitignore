@@ -52,3 +52,6 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+MvcBitirmeVeritabani.db-shm
+MvcBitirmeVeritabani.db-wal
