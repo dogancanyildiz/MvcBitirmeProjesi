@@ -67,5 +67,22 @@ namespace MvcBitirmeProjesi.Controllers
 
             return View(productList);
         }
+
+        [HttpPost]
+        public IActionResult Update(Product updatedProduct)
+        {
+            var product = _context.Products.FirstOrDefault(p => p.Id == updatedProduct.Id);
+            if (product == null) return NotFound();
+
+            product.Name = updatedProduct.Name;
+            product.Unit = updatedProduct.Unit;
+            product.Description = updatedProduct.Description;
+
+            _context.Products.Update(product);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
     }
 }

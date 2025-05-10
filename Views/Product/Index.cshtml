@@ -35,36 +35,32 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model != null && Model.Any())
-                {
-                    foreach (var product in Model)
-                    {
-                        <tr>
-                            <td>@product.Id</td>
-                            <td>@product.Name</td>
-                            <td>@product.Unit</td>
-                            <td>@product.Description</td>
-                            <td>
-                                <img src="@ViewBag.ProductQRCodes[product.Id]"
-                                     alt="QR"
-                                     style="width:40px; height:40px; cursor:pointer;"
-                                     data-bs-toggle="modal"
-                                     data-bs-target="#qrModal"
-                                     onclick="openQrModal('@ViewBag.ProductQRCodes[product.Id]')" />
-                            </td>
-                            <td>
-                                <div class="btn-group">
-                                    <a href="#" class="btn btn-sm btn-warning">Düzenle</a>
-                                    <a href="#" class="btn btn-sm btn-danger ms-1">Sil</a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
+                @foreach (var product in Model)
                 {
                     <tr>
-                        <td colspan="6" class="text-center">Hiç ürün bulunamadı.</td>
+                        <td>@product.Id</td>
+                        <td>@product.Name</td>
+                        <td>@product.Unit</td>
+                        <td>@product.Description</td>
+                        <td>
+                            <img src="@ViewBag.ProductQRCodes[product.Id]"
+                                 alt="QR"
+                                 style="width:40px; height:40px; cursor:pointer;"
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#qrModal"
+                                 onclick="openQrModal('@ViewBag.ProductQRCodes[product.Id]')" />
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-warning"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editModal"
+                                        onclick="editProduct(@product.Id, '@product.Name', '@product.Unit', '@product.Description')">
+                                    Düzenle
+                                </button>
+                                <a href="#" class="btn btn-sm btn-danger ms-1">Sil</a>
+                            </div>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -72,24 +68,62 @@
     </div>
 </div>
 
-<!-- QR Modal -->
-<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="qrModalLabel">QR Kodu</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
-      </div>
-      <div class="modal-body text-center">
-        <img id="qrModalImage" src="" alt="QR Kodu" class="img-fluid" />
-      </div>
+<!-- Düzenleme Modali -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" asp-action="Update" asp-controller="Product">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ürünü Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id" id="editProductId" />
+                    <div class="mb-3">
+                        <label>Adı</label>
+                        <input type="text" class="form-control" name="Name" id="editProductName" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Birim</label>
+                        <input type="text" class="form-control" name="Unit" id="editProductUnit" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Açıklama</label>
+                        <textarea class="form-control" name="Description" id="editProductDescription"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </div>
+        </form>
     </div>
-  </div>
+</div>
+
+<!-- QR Modal (QR kısmı olduğu gibi kalabilir) -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="qrModalLabel">QR Kodu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="qrModalImage" src="" alt="QR Kodu" class="img-fluid" />
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     function openQrModal(qrSrc) {
-        const img = document.getElementById("qrModalImage");
-        img.src = qrSrc;
+        document.getElementById("qrModalImage").src = qrSrc;
+    }
+
+    function editProduct(id, name, unit, description) {
+        document.getElementById("editProductId").value = id;
+        document.getElementById("editProductName").value = name;
+        document.getElementById("editProductUnit").value = unit;
+        document.getElementById("editProductDescription").value = description;
     }
 </script>
