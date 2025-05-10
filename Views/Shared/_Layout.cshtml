@@ -16,7 +16,6 @@
 <body>
     @if (User.Identity.IsAuthenticated)
     {
-        // Header Kısmı
         <header>
             <nav class="navbar navbar-expand-lg bg-body-tertiary">
                 <div class="container-fluid">
@@ -24,41 +23,31 @@
                         <img src="~/img/qrafixx.png" alt="QRAFIX Auto System" height="100" width="150">
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="nav nav-underline">
                             <li class="nav-item">
-                                <a class="nav-link" aria-current="page" asp-area="" asp-controller="Home"
-                                    asp-action="Index">Ana Sayfa</a>
+                                <a class="nav-link" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    Ürünler
-                                </a>
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Ürünler</a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="~/Product">Ürün Listele</a></li>
                                     <li><a class="dropdown-item" href="~/Product">Ürün Ekle</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    Personeller
-                                </a>
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Personeller</a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="~/User">Personel Listele</a></li>
                                     <li><a class="dropdown-item" href="~/User">Personel Ekle</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    QR
-                                </a>
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">QR</a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="~/QR">QR Okut</a></li>
                                     <li><a class="dropdown-item" href="~/QR/Logs">Log Kaydı</a></li>
@@ -68,86 +57,70 @@
                         </ul>
                         <div class="dropdown ms-auto">
                             <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" type="button"
-                                id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-person-circle me-2"></i>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="@Url.Action("Index", "Profile")">👤 Profilim</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item text-danger" href="@Url.Action("Logout", "Profile")">🚪 Çıkış
-                                        Yap</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="@Url.Action("Logout", "Profile")">🚪 Çıkış Yap</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </nav>
         </header>
+
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+
+        <footer class="bg-dark text-light py-4 mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <img src="~/img/qrafixbeyaz.png" alt="QRAFIX Auto System Logo" height="200" width="300">
+                        <div class="mt-3">
+                            <a href="#" class="text-light me-2"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="text-light me-2"><i class="bi bi-twitter"></i></a>
+                            <a href="#" class="text-light me-2"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="text-light"><i class="bi bi-linkedin"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Menü</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="~/Home" class="text-light">Anasayfa</a></li>
+                            <li><a href="~/Product" class="text-light">Ürünler</a></li>
+                            <li><a href="~/User" class="text-light">Personeller</a></li>
+                            <li><a href="#" class="text-light">İletişim</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>İletişim</h5>
+                        <p>Adres: Örnek Mah. Örnek Sok. No:123 Konya</p>
+                        <p>E-posta: info@example.com</p>
+                        <p>Telefon: 0 (332) 123 45 67</p>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12 text-center">
+                        <span>©️ 2025 MvcBitirmeProjesi. Tüm hakları saklıdır.</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
     }
     else
     {
-        //Navbar kısmındaki logo.
-        <header>
-            <nav class="navbar navbar-expand-lg bg-body-tertiary">
-                <div class="container-fluid">
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                        <img src="~/img/qrafixx.png" alt="QRAFIX Auto System" height="100" width="150">
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                </div>
-            </nav>
-        </header>
-    }
-
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <!-- Footer kısmı -->
-
-    <footer class="bg-dark text-light py-4 mt-5">
         <div class="container">
-            <div class="row">
-                <div class="col-md-4 text-center">
-                    <img src="~/img/qrafixbeyaz.png" alt="QRAFIX Auto System Logo" height="200" width="300">
-                    <div class="mt-3">
-                        <a href="#" class="text-light me-2"><i class="bi bi-facebook" style="font-size: 1.5em;"></i></a>
-                        <a href="#" class="text-light me-2"><i class="bi bi-twitter" style="font-size: 1.5em;"></i></a>
-                        <a href="#" class="text-light me-2"><i class="bi bi-instagram"
-                                style="font-size: 1.5em;"></i></a>
-                        <a href="#" class="text-light"><i class="bi bi-linkedin" style="font-size: 1.5em;"></i></a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <h5>Menü</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="~/Home" class="text-light">Anasayfa</a></li>
-                        <li><a href="~/Product" class="text-light">Ürünler</a></li>
-                        <li><a href="~/User" class="text-light">Personeller</a></li>
-                        <li><a href="#" class="text-light">İletişim</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h5>İletişim</h5>
-                    <p>Adres: Örnek Mah. Örnek Sok. No:123 Konya</p>
-                    <p>E-posta: info@example.com</p>
-                    <p>Telefon: 0 (332) 123 45 67</p>
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-md-12 text-center">
-                    <span>©️ 2025 MvcBitirmeProjesi. Tüm hakları saklıdır.</span>
-                </div>
-            </div>
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
         </div>
-    </footer>
+    }
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
