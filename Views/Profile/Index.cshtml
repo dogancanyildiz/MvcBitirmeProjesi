@@ -1,0 +1,46 @@
+@model MvcBitirmeProjesi.Models.User
+
+@{
+    ViewData["Title"] = "Profilim";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-gradient bg-primary text-white text-center rounded-top-4">
+                    <h3 class="mb-0">👤 Kullanıcı Profil Bilgileri</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-3">
+                        <div class="col-5 text-end fw-bold">Ad Soyad:</div>
+                        <div class="col-7">@Model.Name @Model.Surname</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-5 text-end fw-bold">TC:</div>
+                        <div class="col-7">@Model.TC</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-5 text-end fw-bold">Telefon:</div>
+                        <div class="col-7">@Model.Phone</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-5 text-end fw-bold">Ünvan:</div>
+                        <div class="col-7">@Model.Title</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-5 text-end fw-bold">Birim:</div>
+                        <div class="col-7">@Model.Unit</div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light rounded-bottom-4">
+                    <div class="d-flex justify-content-center">
+                        <a href="/QR/Scan" class="btn btn-outline-primary">
+                            📷 QR Kod Oku
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,84 @@
+@model List<MvcBitirmeProjesi.Models.User>
+
+@{
+    var currentSortDirection = ViewBag.SortDirection as string ?? "ASC";
+    var nextSortDirection = currentSortDirection == "ASC" ? "DESC" : "ASC";
+    var currentSortColumn = ViewBag.SortColumn as string ?? "";
+    var searchQuery = ViewBag.SearchQuery as string ?? "";
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
+}
+
+<h2>Kullanıcı Listesi</h2>
+
+<form method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="searchQuery" class="form-control" placeholder="Ara..." value="@searchQuery" />
+        <input type="hidden" name="sortColumn" value="@currentSortColumn" />
+        <input type="hidden" name="sortDirection" value="@currentSortDirection" />
+        <button type="submit" class="btn btn-primary">Ara</button>
+    </div>
+</form>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th style="text-align:right;">
+                <a href="?sortColumn=Id&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Id" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="flex:1;text-align:left;">ID</span>
+                    <span style="flex-shrink:0;">@(currentSortColumn == "Id" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+                </a>
+            </th>
+            <th style="text-align:right;">
+                <a href="?sortColumn=Title&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Title" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="flex:1;text-align:left;">Title</span>
+                    <span style="flex-shrink:0;">@(currentSortColumn == "Title" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+                </a>
+            </th>
+            <th style="text-align:right;">
+                <a href="?sortColumn=Unit&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Unit" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="flex:1;text-align:left;">Birim</span>
+                    <span style="flex-shrink:0;">@(currentSortColumn == "Unit" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+                </a>
+            </th>
+            <th style="text-align:right;">
+                <a href="?sortColumn=TC&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "TC" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="flex:1;text-align:left;">TC</span>
+                    <span style="flex-shrink:0;">@(currentSortColumn == "TC" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+                </a>
+            </th>
+            <th style="text-align:right;">
+                <a href="?sortColumn=Name&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Name" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="flex:1;text-align:left;">Ad</span>
+                    <span style="flex-shrink:0;">@(currentSortColumn == "Name" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+                </a>
+            </th>
+            <th style="text-align:right;">
+                <a href="?sortColumn=Surname&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Surname" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="flex:1;text-align:left;">Soyad</span>
+                    <span style="flex-shrink:0;">@(currentSortColumn == "Surname" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+                </a>
+            </th>
+            <th style="text-align:right;">
+                <a href="?sortColumn=Phone&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Phone" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="flex:1;text-align:left;">Telefon</span>
+                    <span style="flex-shrink:0;">@(currentSortColumn == "Phone" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+                </a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.Title</td>
+                <td>@user.Unit</td>
+                <td>@user.TC</td>
+                <td>@user.Name</td>
+                <td>@user.Surname</td>
+                <td>@user.Phone</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,121 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<div class="container mt-5 text-center">
+    <h1 class="display-3">Bitirme Projesi - ASP.NET Core MVC</h1>
+    <p class="lead mt-3">Bu proje, ASP.NET Core 9.0 ve Visual Studio Code kullanılarak geliştirilmiştir.</p>
+
+    <!-- Carousel -->
+    <div id="welcomeCarousel" class="carousel slide bg-light p-5 rounded mt-5" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <h2>Projeye Hoş Geldiniz!</h2>
+                <p>Bitirme projesi kapsamında geliştirilen uygulamaya hoş geldiniz.</p>
+            </div>
+            <div class="carousel-item">
+                <h2>Yeni Özellikler!</h2>
+                <p>Yakında kullanıcılar için yeni özellikler eklenecek.</p>
+            </div>
+            <div class="carousel-item">
+                <h2>Güncellemeler</h2>
+                <p>ASP.NET Core 9.0 teknolojisiyle en güncel yapıyı kullanıyoruz.</p>
+            </div>
+        </div>
+        <button class="carousel-control-prev bg-dark rounded-circle" type="button" data-bs-target="#welcomeCarousel"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Önceki</span>
+        </button>
+        <button class="carousel-control-next bg-dark rounded-circle" type="button" data-bs-target="#welcomeCarousel"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Sonraki</span>
+        </button>
+    </div>
+
+    <!-- Saat Bilgileri Kartı -->
+    <div class="mt-5 text-center">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title"> Saat</h5>
+                <h3 id="clock" class="display-4 text-primary"></h3> <!-- Mavi renk burada -->
+            </div>
+        </div>
+        <script>
+            setInterval(() => {
+                document.getElementById("clock").innerText = new Date().toLocaleTimeString();
+            }, 1000);
+        </script>
+    </div>
+
+
+    <!-- Bilgilendirme Kartları -->
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">QR Kod ile Giriş</h5>
+                    <p class="card-text">Personeller QR kodlarını okutarak sisteme hızlı giriş sağlar.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Gerçek Zamanlı Takip</h5>
+                    <p class="card-text">Fabrikadaki personel hareketleri anlık olarak izlenebilir.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Raporlama</h5>
+                    <p class="card-text">Giriş-çıkış verileri detaylı rapor olarak alınabilir.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Duyurular -->
+    <div class="mt-5">
+        <h4>Duyurular</h4>
+        <ul class="list-group">
+            <li class="list-group-item d-flex align-items-center bg-primary text-white">
+                <i class="bi bi-calendar-check me-3 text-light"></i>
+                <span>19 Mayıs günü resmi tatildir.</span>
+            </li>
+            <li class="list-group-item d-flex align-items-center bg-primary text-white">
+                <i class="bi bi-calendar-event me-3 text-light"></i>
+                <span>Yeni vardiya sistemi 1 Haziran'da başlıyor.</span>
+            </li>
+            <li class="list-group-item d-flex align-items-center bg-primary text-white">
+                <i class="bi bi-megaphone me-3 text-light"></i>
+                <span>Ankarada yeni fabrika da işbirliği duyurusu yapıldı.</span>
+            </li>
+        </ul>
+    </div>
+
+
+    <!-- Hızlı Erişim Butonları -->
+    <div class="d-flex justify-content-center gap-3 mt-5">
+        <a href="/User" class="btn btn-outline-success">Yeni Personel Ekle</a>
+        <a href="/QR" class="btn btn-outline-primary">QR Kod Oku</a>
+        <a href="/QR/Logs" class="btn btn-outline-dark">LOG Kayıt</a>
+    </div>
+
+    <!-- Harita Konumu -->
+    <div class="mt-5 d-flex justify-content-center">
+        <div style="max-width: 480px; width: 100%;">
+            <h3 class="text-center">Fabrika Konumu</h3>
+            <div class="ratio ratio-16x9 shadow rounded">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3058.832493185379!2d32.85405121540046!3d39.92077097942501!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14d34fc25e9c59b5%3A0x4fb542f7762c07f2!2sAnkara!5e0!3m2!1str!2str!4v1652378279409"
+                    style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+</div>

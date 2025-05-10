@@ -1,0 +1,60 @@
+@{
+    ViewBag.Title = "QR Kod Okuyucu";
+}
+
+
+<div class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="text-center">
+        <h2 class="mb-4">QR Kod Tarayıcı</h2>
+
+        <button id="btnStartScanner" class="btn btn-primary mb-3">QR Kod Tara</button>
+
+        <div id="qr-reader" class="mb-3" style="width: 100%; max-width: 320px;"></div>
+
+        <div id="qr-result" class="fw-bold text-success"></div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+<script>
+    document.getElementById("btnStartScanner").addEventListener("click", function () {
+        const qrReader = new Html5Qrcode("qr-reader");
+
+        qrReader.start(
+            { facingMode: "environment" },
+            {
+                fps: 10,
+                qrbox: 250
+            },
+            (decodedText, decodedResult) => {
+                document.getElementById("qr-result").innerText = "Okunan QR: " + decodedText;
+
+                fetch('/QR/SaveScan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ qrValue: decodedText })
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error("Veri kaydedilemedi");
+                        return response.text();
+                    })
+                    .then(data => {
+                        console.log("Sunucu yanıtı:", data);
+                    })
+                    .catch(error => {
+                        console.error("Hata:", error);
+                    });
+
+                qrReader.stop();
+            },
+            (errorMessage) => {
+                // hata mesajı
+            }
+        ).catch(err => {
+            console.error("Kamera başlatılamadı: ", err);
+        });
+    });
+</script>

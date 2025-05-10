@@ -1,0 +1,25 @@
+@model IEnumerable<MvcBitirmeProjesi.Models.Product>
+
+<h2>Ürünler</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Adı</th>
+            <th>Birim</th>
+            <th>Açıklama</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var product in Model)
+    {
+        <tr>
+            <td>@product.Id</td>
+            <td>@product.Name</td>
+            <td>@product.Unit</td>
+            <td>@product.Description</td>
+        </tr>
+    }
+    </tbody>
+</table>
