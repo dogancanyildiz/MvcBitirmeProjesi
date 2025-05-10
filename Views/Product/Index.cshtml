@@ -10,7 +10,7 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Ürün Listesi</h2>
-        <a href="#" class="btn btn-success">Yeni Ürün Ekle</a>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">Yeni Ürün Ekle</button>
     </div>
 
     <form method="get" class="mb-3">
@@ -43,19 +43,14 @@
                         <td>@product.Unit</td>
                         <td>@product.Description</td>
                         <td>
-                            <img src="@ViewBag.ProductQRCodes[product.Id]"
-                                 alt="QR"
-                                 style="width:40px; height:40px; cursor:pointer;"
-                                 data-bs-toggle="modal"
-                                 data-bs-target="#qrModal"
-                                 onclick="openQrModal('@ViewBag.ProductQRCodes[product.Id]')" />
+                            <img src="@ViewBag.ProductQRCodes[product.Id]" alt="QR"
+                                style="width:40px; height:40px; cursor:pointer;" data-bs-toggle="modal"
+                                data-bs-target="#qrModal" onclick="openQrModal('@ViewBag.ProductQRCodes[product.Id]')" />
                         </td>
                         <td>
                             <div class="btn-group">
-                                <button class="btn btn-sm btn-warning"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editModal"
-                                        onclick="editProduct(@product.Id, '@product.Name', '@product.Unit', '@product.Description')">
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"
+                                    onclick="editProduct(@product.Id, '@product.Name', '@product.Unit', '@product.Description')">
                                     Düzenle
                                 </button>
                                 <a href="#" class="btn btn-sm btn-danger ms-1">Sil</a>
@@ -65,6 +60,37 @@
                 }
             </tbody>
         </table>
+    </div>
+</div>
+
+<!-- Yeni Ürün Ekle Modali -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" asp-action="Create" asp-controller="Product">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">Yeni Ürün Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Adı</label>
+                        <input type="text" class="form-control" name="Name" required />
+                    </div>
+                    <div class="mb-3">
+                        <label>Birim</label>
+                        <input type="text" class="form-control" name="Unit" required />
+                    </div>
+                    <div class="mb-3">
+                        <label>Açıklama</label>
+                        <textarea class="form-control" name="Description" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 

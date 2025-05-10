@@ -84,5 +84,35 @@ namespace MvcBitirmeProjesi.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public IActionResult Create(Product newProduct)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Products.Add(newProduct);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            // HATA varsa burası çalışır, ViewBag olmadan Index çağrılırsa patlar
+            var products = _context.Products.ToList();
+
+            // QR kodları yeniden oluşturulmalı
+            var qrCodes = new Dictionary<int, string>();
+            using var qrGenerator = new QRCodeGenerator();
+            foreach (var product in products)
+            {
+                var qrData = qrGenerator.CreateQrCode(product.Id.ToString(), QRCodeGenerator.ECCLevel.Q);
+                var svgQr = new SvgQRCode(qrData);
+                var svgImage = svgQr.GetGraphic(5);
+                var base64Svg = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(svgImage));
+                qrCodes[product.Id] = $"data:image/svg+xml;base64,{base64Svg}";
+            }
+
+            ViewBag.ProductQRCodes = qrCodes;
+
+            return View("Index", products); // eksiksiz döndür
+        }
+
     }
 }
