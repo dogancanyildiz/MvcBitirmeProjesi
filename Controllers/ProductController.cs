@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using MvcBitirmeProjesi.Data;
 using MvcBitirmeProjesi.Models;
 using System.Linq;
+using QRCoder;
+using System.Collections.Generic;
 
 namespace MvcBitirmeProjesi.Controllers
 {
@@ -13,12 +15,11 @@ namespace MvcBitirmeProjesi.Controllers
         {
             _context = context;
         }
-        
+
         public IActionResult Index(string sortColumn, string sortDirection, string searchQuery)
         {
             var products = _context.Products.AsQueryable();
 
-            // Arama işlemi
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 var lowerSearch = searchQuery.ToLower();
@@ -29,7 +30,6 @@ namespace MvcBitirmeProjesi.Controllers
                 );
             }
 
-            // Sıralama işlemi
             if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortDirection))
             {
                 products = sortColumn switch
@@ -43,16 +43,29 @@ namespace MvcBitirmeProjesi.Controllers
             }
             else
             {
-                // Varsayılan sıralama
                 products = products.OrderBy(p => p.Id);
             }
 
-            // ViewBag ile sıralama ve arama bilgilerini view'a gönder
             ViewBag.SortColumn = sortColumn;
             ViewBag.SortDirection = sortDirection;
             ViewBag.SearchQuery = searchQuery;
 
-            return View(products.ToList());
+            var productList = products.ToList();
+
+            var qrCodes = new Dictionary<int, string>();
+            using var qrGenerator = new QRCodeGenerator();
+            foreach (var product in productList)
+            {
+                var qrData = qrGenerator.CreateQrCode(product.Id.ToString(), QRCodeGenerator.ECCLevel.Q);
+                var svgQr = new SvgQRCode(qrData);
+                var svgImage = svgQr.GetGraphic(5); // küçük QR boyutu
+                var base64Svg = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(svgImage));
+                qrCodes[product.Id] = $"data:image/svg+xml;base64,{base64Svg}";
+            }
+
+            ViewBag.ProductQRCodes = qrCodes;
+
+            return View(productList);
         }
     }
 }

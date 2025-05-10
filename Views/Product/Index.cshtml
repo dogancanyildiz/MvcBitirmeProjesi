@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Ürünler";
     var currentSortDirection = ViewBag.SortDirection as string ?? "ASC";
-    var nextSortDirection = currentSortDirection == "ASC" ? "DESC" : "ASC";
     var currentSortColumn = ViewBag.SortColumn as string ?? "";
     var searchQuery = ViewBag.SearchQuery as string ?? "";
 }
@@ -27,38 +26,11 @@
         <table class="table table-striped table-hover">
             <thead class="table-dark">
                 <tr>
-                    <th>
-                        <a href="?sortColumn=Id&sortDirection=@(currentSortColumn == "Id" && currentSortDirection == "ASC" ? "DESC" : "ASC")&searchQuery=@searchQuery"
-                            class="text-light" style="display:flex;justify-content:space-between;align-items:center;">
-                            <span style="flex:1;text-align:left;">ID</span>
-                            <span style="flex-shrink:0;">@(currentSortColumn == "Id" ? (currentSortDirection == "ASC" ?
-                                                                "▲" : "▼") : "")</span>
-                        </a>
-                    </th>
-                    <th>
-                        <a href="?sortColumn=Name&sortDirection=@(currentSortColumn == "Name" && currentSortDirection == "ASC" ? "DESC" : "ASC")&searchQuery=@searchQuery"
-                            class="text-light" style="display:flex;justify-content:space-between;align-items:center;">
-                            <span style="flex:1;text-align:left;">Adı</span>
-                            <span style="flex-shrink:0;">@(currentSortColumn == "Name" ? (currentSortDirection == "ASC"
-                                                                ? "▲" : "▼") : "")</span>
-                        </a>
-                    </th>
-                    <th>
-                        <a href="?sortColumn=Unit&sortDirection=@(currentSortColumn == "Unit" && currentSortDirection == "ASC" ? "DESC" : "ASC")&searchQuery=@searchQuery"
-                            class="text-light" style="display:flex;justify-content:space-between;align-items:center;">
-                            <span style="flex:1;text-align:left;">Birim</span>
-                            <span style="flex-shrink:0;">@(currentSortColumn == "Unit" ? (currentSortDirection == "ASC"
-                                                                ? "▲" : "▼") : "")</span>
-                        </a>
-                    </th>
-                    <th>
-                        <a href="?sortColumn=Description&sortDirection=@(currentSortColumn == "Description" && currentSortDirection == "ASC" ? "DESC" : "ASC")&searchQuery=@searchQuery"
-                            class="text-light" style="display:flex;justify-content:space-between;align-items:center;">
-                            <span style="flex:1;text-align:left;">Açıklama</span>
-                            <span style="flex-shrink:0;">@(currentSortColumn == "Description" ? (currentSortDirection ==
-                                                                "ASC" ? "▲" : "▼") : "")</span>
-                        </a>
-                    </th>
+                    <th>ID</th>
+                    <th>Adı</th>
+                    <th>Birim</th>
+                    <th>Açıklama</th>
+                    <th>QR</th>
                     <th>İşlemler</th>
                 </tr>
             </thead>
@@ -73,6 +45,14 @@
                             <td>@product.Unit</td>
                             <td>@product.Description</td>
                             <td>
+                                <img src="@ViewBag.ProductQRCodes[product.Id]"
+                                     alt="QR"
+                                     style="width:40px; height:40px; cursor:pointer;"
+                                     data-bs-toggle="modal"
+                                     data-bs-target="#qrModal"
+                                     onclick="openQrModal('@ViewBag.ProductQRCodes[product.Id]')" />
+                            </td>
+                            <td>
                                 <div class="btn-group">
                                     <a href="#" class="btn btn-sm btn-warning">Düzenle</a>
                                     <a href="#" class="btn btn-sm btn-danger ms-1">Sil</a>
@@ -84,10 +64,32 @@
                 else
                 {
                     <tr>
-                        <td colspan="5" class="text-center">Hiç ürün bulunamadı.</td>
+                        <td colspan="6" class="text-center">Hiç ürün bulunamadı.</td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
+
+<!-- QR Modal -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="qrModalLabel">QR Kodu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="qrModalImage" src="" alt="QR Kodu" class="img-fluid" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    function openQrModal(qrSrc) {
+        const img = document.getElementById("qrModalImage");
+        img.src = qrSrc;
+    }
+</script>
