@@ -40,9 +40,9 @@ namespace MvcBitirmeProjesi.Controllers
                 users = sortColumn switch
                 {
                     "Id" => sortDirection == "ASC" ? users.OrderBy(u => u.Id) : users.OrderByDescending(u => u.Id),
-                    "Title" => sortDirection == "ASC" ? users.OrderBy(u => u.Role.Name) : users.OrderByDescending(u => u.Role.Name),
+                    "Role" => sortDirection == "ASC" ? users.OrderBy(u => u.Role.Name) : users.OrderByDescending(u => u.Role.Name),
                     "Unit" => sortDirection == "ASC" ? users.OrderBy(u => u.Unit.Name) : users.OrderByDescending(u => u.Unit.Name),
-                    "Tc" => sortDirection == "ASC" ? users.OrderBy(u => u.TC) : users.OrderByDescending(u => u.TC),
+                    "TC" => sortDirection == "ASC" ? users.OrderBy(u => u.TC) : users.OrderByDescending(u => u.TC),
                     "Name" => sortDirection == "ASC" ? users.OrderBy(u => u.Name) : users.OrderByDescending(u => u.Name),
                     "Surname" => sortDirection == "ASC" ? users.OrderBy(u => u.Surname) : users.OrderByDescending(u => u.Surname),
                     "Phone" => sortDirection == "ASC" ? users.OrderBy(u => u.Phone) : users.OrderByDescending(u => u.Phone),
@@ -102,6 +102,45 @@ namespace MvcBitirmeProjesi.Controllers
                 return NotFound();
 
             return View(user);
+        }
+
+        // Yeni eklenen Update metodu
+        [HttpPost]
+        public IActionResult Update(User updatedUser)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Id == updatedUser.Id);
+            if (user == null) return NotFound();
+
+            user.TC = updatedUser.TC;
+            user.Name = updatedUser.Name;
+            user.Surname = updatedUser.Surname;
+            user.Phone = updatedUser.Phone;
+            user.UnitId = updatedUser.UnitId;
+            user.RoleId = updatedUser.RoleId;
+
+            // Şifre güncellenmesi gerekiyor mu kontrolü
+            if (!string.IsNullOrWhiteSpace(updatedUser.Password))
+            {
+                user.Password = updatedUser.Password;
+            }
+
+            _context.Users.Update(user);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        // Yeni eklenen Delete metodu
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null) return NotFound();
+
+            _context.Users.Remove(user);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
         }
     }
 }
