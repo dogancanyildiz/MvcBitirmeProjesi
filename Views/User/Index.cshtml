@@ -9,62 +9,72 @@
     var totalPages = ViewBag.TotalPages ?? 1;
 }
 
-<h2>Kullanıcı Listesi</h2>
+<h2 class="mb-4">Kullanıcı Listesi</h2>
 
-<form method="get" class="mb-3">
-    <div class="input-group">
-        <input type="text" name="searchQuery" class="form-control" placeholder="Ara..." value="@searchQuery" />
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createUserModal">Yeni Kullanıcı
+        Ekle</button>
+    <form method="get" class="d-flex" style="max-width: 300px;">
+        <input type="text" name="searchQuery" class="form-control me-2" placeholder="Ara..." value="@searchQuery" />
         <input type="hidden" name="sortColumn" value="@currentSortColumn" />
         <input type="hidden" name="sortDirection" value="@currentSortDirection" />
-        <button type="submit" class="btn btn-primary">Ara</button>
-    </div>
-</form>
+        <button type="submit" class="btn btn-outline-primary">Ara</button>
+    </form>
+</div>
 
-<table class="table table-bordered">
+<table class="table table-striped table-hover align-middle">
     <thead>
         <tr>
-            <th style="text-align:right;">
-                <a href="?sortColumn=Id&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Id" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="flex:1;text-align:left;">ID</span>
-                    <span style="flex-shrink:0;">@(currentSortColumn == "Id" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+            <th>
+                <a href="?sortColumn=Id&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Id" ? "DESC" : "ASC")&searchQuery=@searchQuery"
+                    class="text-decoration-none d-flex justify-content-between align-items-center">
+                    <span>ID</span>
+                    <span>@(currentSortColumn == "Id" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                 </a>
             </th>
-            <th style="text-align:right;">
-                <a href="?sortColumn=Role&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Role" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="flex:1;text-align:left;">Rol</span>
-                    <span style="flex-shrink:0;">@(currentSortColumn == "Role" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+            <th>
+                <a href="?sortColumn=Role&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Role" ? "DESC" : "ASC")&searchQuery=@searchQuery"
+                    class="text-decoration-none d-flex justify-content-between align-items-center">
+                    <span>Rol</span>
+                    <span>@(currentSortColumn == "Role" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                 </a>
             </th>
-            <th style="text-align:right;">
-                <a href="?sortColumn=Unit&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Unit" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="flex:1;text-align:left;">Birim</span>
-                    <span style="flex-shrink:0;">@(currentSortColumn == "Unit" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+            <th>
+                <a href="?sortColumn=Unit&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Unit" ? "DESC" : "ASC")&searchQuery=@searchQuery"
+                    class="text-decoration-none d-flex justify-content-between align-items-center">
+                    <span>Birim</span>
+                    <span>@(currentSortColumn == "Unit" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                 </a>
             </th>
-            <th style="text-align:right;">
-                <a href="?sortColumn=TC&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "TC" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="flex:1;text-align:left;">TC</span>
-                    <span style="flex-shrink:0;">@(currentSortColumn == "TC" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+            <th>
+                <a href="?sortColumn=TC&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "TC" ? "DESC" : "ASC")&searchQuery=@searchQuery"
+                    class="text-decoration-none d-flex justify-content-between align-items-center">
+                    <span>TC</span>
+                    <span>@(currentSortColumn == "TC" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                 </a>
             </th>
-            <th style="text-align:right;">
-                <a href="?sortColumn=Name&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Name" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="flex:1;text-align:left;">Ad</span>
-                    <span style="flex-shrink:0;">@(currentSortColumn == "Name" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+            <th>
+                <a href="?sortColumn=Name&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Name" ? "DESC" : "ASC")&searchQuery=@searchQuery"
+                    class="text-decoration-none d-flex justify-content-between align-items-center">
+                    <span>Ad</span>
+                    <span>@(currentSortColumn == "Name" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                 </a>
             </th>
-            <th style="text-align:right;">
-                <a href="?sortColumn=Surname&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Surname" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="flex:1;text-align:left;">Soyad</span>
-                    <span style="flex-shrink:0;">@(currentSortColumn == "Surname" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+            <th>
+                <a href="?sortColumn=Surname&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Surname" ? "DESC" : "ASC")&searchQuery=@searchQuery"
+                    class="text-decoration-none d-flex justify-content-between align-items-center">
+                    <span>Soyad</span>
+                    <span>@(currentSortColumn == "Surname" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                 </a>
             </th>
-            <th style="text-align:right;">
-                <a href="?sortColumn=Phone&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Phone" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="flex:1;text-align:left;">Telefon</span>
-                    <span style="flex-shrink:0;">@(currentSortColumn == "Phone" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+            <th>
+                <a href="?sortColumn=Phone&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Phone" ? "DESC" : "ASC")&searchQuery=@searchQuery"
+                    class="text-decoration-none d-flex justify-content-between align-items-center">
+                    <span>Telefon</span>
+                    <span>@(currentSortColumn == "Phone" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                 </a>
             </th>
+            <th>İşlemler</th>
         </tr>
     </thead>
     <tbody>
@@ -78,7 +88,153 @@
                 <td>@user.Name</td>
                 <td>@user.Surname</td>
                 <td>@user.Phone</td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editUserModal"
+                            onclick="editUser(@user.Id, '@user.TC', '@user.Name', '@user.Surname', '@user.Phone', @user.Unit?.Id, @user.Role?.Id)">
+                            Düzenle
+                        </button>
+                        <form method="post" asp-action="Delete" asp-controller="User"
+                            onsubmit="return confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?');" class="ms-1">
+                            <input type="hidden" name="id" value="@user.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+                        </form>
+                    </div>
+                </td>
             </tr>
         }
     </tbody>
 </table>
+
+<!-- Kullanıcı Ekle Modal -->
+<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-action="Create" asp-controller="User" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createUserModalLabel">Yeni Kullanıcı Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Ad</label>
+                        <input type="text" class="form-control" id="Name" name="Name" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Surname" class="form-label">Soyad</label>
+                        <input type="text" class="form-control" id="Surname" name="Surname" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="TC" class="form-label">TC</label>
+                        <input type="text" class="form-control" id="TC" name="TC" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Phone" class="form-label">Telefon</label>
+                        <input type="text" class="form-control" id="Phone" name="Phone" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Password" class="form-label">Şifre</label>
+                        <input type="password" class="form-control" id="Password" name="Password" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="UnitId" class="form-label">Birim</label>
+                        <select class="form-select" id="UnitId" name="UnitId" required>
+                            <option value="">Seçiniz</option>
+                            @foreach (var unit in ViewBag.Units)
+                            {
+                                <option value="@unit.Id">@unit.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="RoleId" class="form-label">Rol</label>
+                        <select class="form-select" id="RoleId" name="RoleId" required>
+                            <option value="">Seçiniz</option>
+                            @foreach (var role in ViewBag.Roles)
+                            {
+                                <option value="@role.Id">@role.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Kullanıcı Düzenleme Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-action="Update" asp-controller="User" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Kullanıcıyı Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editUserId" name="Id" />
+                    <div class="mb-3">
+                        <label for="editUserTC" class="form-label">TC</label>
+                        <input type="text" class="form-control" id="editUserTC" name="TC" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserName" class="form-label">Ad</label>
+                        <input type="text" class="form-control" id="editUserName" name="Name" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserSurname" class="form-label">Soyad</label>
+                        <input type="text" class="form-control" id="editUserSurname" name="Surname" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserPhone" class="form-label">Telefon</label>
+                        <input type="text" class="form-control" id="editUserPhone" name="Phone" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserUnitId" class="form-label">Birim</label>
+                        <select class="form-select" id="editUserUnitId" name="UnitId" required>
+                            <option value="">Seçiniz</option>
+                            @foreach (var unit in ViewBag.Units)
+                            {
+                                <option value="@unit.Id">@unit.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserRoleId" class="form-label">Rol</label>
+                        <select class="form-select" id="editUserRoleId" name="RoleId" required>
+                            <option value="">Seçiniz</option>
+                            @foreach (var role in ViewBag.Roles)
+                            {
+                                <option value="@role.Id">@role.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserPassword" class="form-label">Şifre (Boş bırakılırsa değişmez)</label>
+                        <input type="password" class="form-control" id="editUserPassword" name="Password" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function editUser(id, tc, name, surname, phone, unitId, roleId) {
+        document.getElementById("editUserId").value = id;
+        document.getElementById("editUserTC").value = tc;
+        document.getElementById("editUserName").value = name;
+        document.getElementById("editUserSurname").value = surname;
+        document.getElementById("editUserPhone").value = phone;
+        document.getElementById("editUserUnitId").value = unitId || "";
+        document.getElementById("editUserRoleId").value = roleId || "";
+    }
+</script>

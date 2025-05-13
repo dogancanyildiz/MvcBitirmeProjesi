@@ -50,12 +50,39 @@ namespace MvcBitirmeProjesi.Controllers
                 };
             }
 
-
             ViewBag.SortColumn = sortColumn;
             ViewBag.SortDirection = sortDirection;
             ViewBag.SearchQuery = searchQuery;
 
+            ViewBag.Units = _context.Units.ToList();
+            ViewBag.Roles = _context.Roles.ToList();
             return View(users.ToList());
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            ViewBag.Units = _context.Units.ToList();
+            ViewBag.Roles = _context.Roles.ToList();
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(User newUser)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Users.Add(newUser);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Units = _context.Units.ToList();
+            ViewBag.Roles = _context.Roles.ToList();
+            return View("Index", _context.Users
+                .Include(u => u.Role)
+                .Include(u => u.Unit)
+                .ToList());
         }
 
         [HttpGet]
@@ -66,7 +93,10 @@ namespace MvcBitirmeProjesi.Controllers
 
             var tc = User.FindFirst(ClaimTypes.Name)?.Value;
 
-            var user = _context.Users.FirstOrDefault(u => u.TC == tc);
+            var user = _context.Users
+                .Include(u => u.Role)
+                .Include(u => u.Unit)
+                .FirstOrDefault(u => u.TC == tc);
 
             if (user == null)
                 return NotFound();
