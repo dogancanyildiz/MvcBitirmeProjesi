@@ -1,0 +1,134 @@
+@model IEnumerable<MvcBitirmeProjesi.Models.ProductTransferLog>
+
+@{
+    ViewBag.Title = "Ürün Transfer Logları";
+    var currentSortDirection = ViewBag.SortDirection as string ?? "DESC";
+    var nextSortDirection = currentSortDirection == "ASC" ? "DESC" : "ASC";
+    var currentSortColumn = ViewBag.SortColumn as string ?? "TransferTarihi";
+    var searchQuery = ViewBag.SearchQuery as string ?? "";
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
+}
+
+<h2 class="mb-4">Ürün Transfer Logları</h2>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="@Url.Action("Scan", "QR")" class="btn btn-success">
+        <i class="fas fa-qrcode me-1"></i> Yeni Transfer
+    </a>
+    <form method="get" class="d-flex" style="max-width: 300px;">
+        <input type="text" name="searchQuery" class="form-control me-2" placeholder="Ara..." value="@searchQuery" />
+        <input type="hidden" name="sortColumn" value="@currentSortColumn" />
+        <input type="hidden" name="sortDirection" value="@currentSortDirection" />
+        <button type="submit" class="btn btn-outline-primary">Ara</button>
+    </form>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th>
+                    <a href="?sortColumn=Product&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Product" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
+                        class="text-decoration-none d-flex justify-content-between align-items-center">
+                        <span>Ürün</span>
+                        <span>@(currentSortColumn == "Product" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+                    </a>
+                </th>
+                <th>
+                    <a href="?sortColumn=Miktar&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Miktar" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
+                        class="text-decoration-none d-flex justify-content-between align-items-center">
+                        <span>Miktar</span>
+                        <span>@(currentSortColumn == "Miktar" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+                    </a>
+                </th>
+                <th>
+                    <a href="?sortColumn=User&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "User" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
+                        class="text-decoration-none d-flex justify-content-between align-items-center">
+                        <span>Aktaran Personel</span>
+                        <span>@(currentSortColumn == "User" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+                    </a>
+                </th>
+                <th>
+                    <a href="?sortColumn=Unit&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Unit" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
+                        class="text-decoration-none d-flex justify-content-between align-items-center">
+                        <span>Birim</span>
+                        <span>@(currentSortColumn == "Unit" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+                    </a>
+                </th>
+                <th>
+                    <a href="?sortColumn=TransferTarihi&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "TransferTarihi" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
+                        class="text-decoration-none d-flex justify-content-between align-items-center">
+                        <span>Tarih</span>
+                        <span>@(currentSortColumn == "TransferTarihi" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+                    </a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model)
+            {
+                <tr>
+                    <td>@log.Product.Name</td>
+                    <td>@log.Miktar</td>
+                    <td>@log.User.Name @log.User.Surname</td>
+                    <td>@log.User.Unit?.Name</td>
+                    <td>@log.TransferTarihi.ToString("dd.MM.yyyy HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (totalPages > 1)
+{
+    <nav aria-label="Sayfalama">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="?page=1&sortColumn=@currentSortColumn&sortDirection=@currentSortDirection&searchQuery=@searchQuery">İlk</a>
+            </li>
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="?page=@(currentPage - 1)&sortColumn=@currentSortColumn&sortDirection=@currentSortDirection&searchQuery=@searchQuery">Önceki</a>
+            </li>
+            
+            @{
+                int startPage = Math.Max(1, currentPage - 2);
+                int endPage = Math.Min(totalPages, startPage + 4);
+                
+                if (endPage - startPage < 4 && startPage > 1)
+                {
+                    startPage = Math.Max(1, endPage - 4);
+                }
+            }
+            
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="?page=@i&sortColumn=@currentSortColumn&sortDirection=@currentSortDirection&searchQuery=@searchQuery">@i</a>
+                </li>
+            }
+            
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link" href="?page=@(currentPage + 1)&sortColumn=@currentSortColumn&sortDirection=@currentSortDirection&searchQuery=@searchQuery">Sonraki</a>
+            </li>
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link" href="?page=@totalPages&sortColumn=@currentSortColumn&sortDirection=@currentSortDirection&searchQuery=@searchQuery">Son</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="text-center text-muted">
+        <small>Toplam @ViewBag.TotalItems transfer, @ViewBag.TotalPages sayfa</small>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Tooltip etkinleştirme (gerekirse)
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+    </script>
+}

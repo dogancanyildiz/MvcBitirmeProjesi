@@ -31,24 +31,6 @@
                 document.getElementById("qr-result").innerText = "Okunan QR: " + decodedText;
                 onQrScanned(decodedText);
 
-                fetch('/QR/SaveScan', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ qrValue: decodedText })
-                })
-                    .then(response => {
-                        if (!response.ok) throw new Error("Veri kaydedilemedi");
-                        return response.text();
-                    })
-                    .then(data => {
-                        console.log("Sunucu yanıtı:", data);
-                    })
-                    .catch(error => {
-                        console.error("Hata:", error);
-                    });
-
                 qrReader.stop();
             },
             (errorMessage) => {
@@ -74,7 +56,8 @@
                 <p><strong>Açıklama:</strong> <span id="modalProductDesc"></span></p>
                 <p><strong>Stok:</strong> <span id="modalProductStock"></span></p>
                 <p><strong>QR Görseli:</strong></p>
-                <img id="modalQrImage" src="" alt="QR Görseli" class="d-block mx-auto" style="width: 150px; height: 150px; object-fit: contain;" />
+                <img id="modalQrImage" src="" alt="QR Görseli" class="d-block mx-auto"
+                    style="width: 150px; height: 150px; object-fit: contain;" />
                 <div class="mb-3">
                     <label for="transferMiktar" class="form-label">Aktarılacak Miktar</label>
                     <input type="number" class="form-control" id="transferMiktar" min="1" placeholder="Miktar girin">
@@ -92,26 +75,50 @@
 
     // QR okutma işlemi sonucunda tetiklenecek fonksiyon
     function onQrScanned(qrValue) {
-        // örneğin QR içinde ürün ID varsa:
-        const productId = parseInt(qrValue);
-        if (!productId) {
-            alert("Geçersiz QR kod.");
-            return;
+        if (qrValue.startsWith("PRODUCT_")) {
+            const productId = parseInt(qrValue.replace("PRODUCT_", ""));
+            if (!productId) {
+                alert("Geçersiz Ürün QR kodu.");
+                return;
+            }
+            currentProductId = productId;
+
+            // Ürün detayını çek
+            $.get("/Product/Details/" + productId, function (data) {
+                $("#modalProductId").text(data.id);
+                $("#modalProductName").text(data.name);
+                $("#modalProductDesc").text(data.description);
+                $("#modalProductStock").text(data.stock);
+                $("#modalQrImage").attr("src", data.qrCode);
+                $("#productTransferModal").modal("show");
+            }).fail(function () {
+                alert("Ürün bulunamadı.");
+            });
+
+        } else if (qrValue.startsWith("TIME_")) {
+            // Giriş/Çıkış işlemi için
+            fetch('/QR/SaveScan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ qrValue: qrValue })
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error("Veri kaydedilemedi");
+                    return response.text();
+                })
+                .then(data => {
+                    console.log("Giriş/Çıkış işlendi:", data);
+                    document.getElementById("qr-result").innerText = "Zaman QR işlendi.";
+                })
+                .catch(error => {
+                    console.error("Hata:", error);
+                });
+
+        } else {
+            alert("Geçersiz QR tipi.");
         }
-
-        currentProductId = productId;
-
-        // Ürün detayını çek
-        $.get("/Product/Details/" + productId, function (data) {
-            $("#modalProductId").text(data.id);
-            $("#modalProductName").text(data.name);
-            $("#modalProductDesc").text(data.description);
-            $("#modalProductStock").text(data.stock);
-            $("#modalQrImage").attr("src", data.qrCode);
-            $("#productTransferModal").modal("show");
-        }).fail(function () {
-            alert("Ürün bulunamadı.");
-        });
     }
 
     // Aktarma butonu fonksiyonu

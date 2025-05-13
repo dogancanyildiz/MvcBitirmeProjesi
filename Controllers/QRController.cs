@@ -42,10 +42,11 @@ namespace MvcBitirmeProjesi.Controllers
         [HttpGet]
         public ContentResult Generate()
         {
-            var now = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+            var now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"); // format değiştirildi
+            var qrText = "TIME_" + now;
 
             var generator = new QRCodeGenerator();
-            var data = generator.CreateQrCode(now, QRCodeGenerator.ECCLevel.Q);
+            var data = generator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q);
             var svgQr = new SvgQRCode(data);
             var svgImage = svgQr.GetGraphic(10); // boyut ayarı
 
@@ -98,7 +99,7 @@ namespace MvcBitirmeProjesi.Controllers
         [HttpPost]
         public IActionResult TransferProduct(int productId, int miktar)
         {
-            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userIdStr = HttpContext.User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
 
             int userId = int.Parse(userIdStr);
@@ -126,6 +127,17 @@ namespace MvcBitirmeProjesi.Controllers
             _context.SaveChanges();
 
             return Json(new { success = true });
+        }
+
+        public IActionResult TransferLogs()
+        {
+            var logs = _context.ProductTransferLogs
+                .Include(x => x.Product)
+                .Include(x => x.User).ThenInclude(u => u.Unit)
+                .OrderByDescending(x => x.TransferTarihi)
+                .ToList();
+
+            return View(logs);
         }
     }
 }

@@ -68,7 +68,8 @@ namespace MvcBitirmeProjesi.Controllers
             foreach (var product in paginatedProducts)
             {
                 QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                QRCodeData qrCodeData = qrGenerator.CreateQrCode(product.Id.ToString(), QRCodeGenerator.ECCLevel.Q);
+                var qrText = "PRODUCT_" + product.Id;
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q);
                 BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
                 byte[] qrCodeBytes = qrCode.GetGraphic(20);
                 string qrCodeBase64 = $"data:image/png;base64,{Convert.ToBase64String(qrCodeBytes)}";
@@ -126,7 +127,8 @@ namespace MvcBitirmeProjesi.Controllers
             using var qrGenerator = new QRCodeGenerator();
             foreach (var product in products)
             {
-                var qrData = qrGenerator.CreateQrCode(product.Id.ToString(), QRCodeGenerator.ECCLevel.Q);
+                var qrText = "PRODUCT_" + product.Id;
+                var qrData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q);
                 var svgQr = new SvgQRCode(qrData);
                 var svgImage = svgQr.GetGraphic(5);
                 var base64Svg = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(svgImage));
@@ -157,7 +159,8 @@ namespace MvcBitirmeProjesi.Controllers
 
             // QR görseli base64 olarak oluşturuluyor
             var qrGenerator = new QRCodeGenerator();
-            var qrCodeData = qrGenerator.CreateQrCode(product.Id.ToString(), QRCodeGenerator.ECCLevel.Q);
+            var qrText = "PRODUCT_" + product.Id;
+            var qrCodeData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q);
             var qrCode = new BitmapByteQRCode(qrCodeData);
             var qrCodeBytes = qrCode.GetGraphic(20);
             var qrCodeBase64 = $"data:image/png;base64,{Convert.ToBase64String(qrCodeBytes)}";
