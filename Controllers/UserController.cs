@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MvcBitirmeProjesi.Data;
 using MvcBitirmeProjesi.Models;
 using System.Linq;
@@ -25,8 +26,8 @@ namespace MvcBitirmeProjesi.Controllers
                 users = users.Where(u =>
                     (u.Name != null && u.Name.ToLower().Contains(lowerSearch)) ||
                     (u.Surname != null && u.Surname.ToLower().Contains(lowerSearch)) ||
-                    (u.Title != null && u.Title.ToLower().Contains(lowerSearch)) ||
-                    (u.Unit != null && u.Unit.ToLower().Contains(lowerSearch)) ||
+                    (u.Role != null && u.Role.Name.ToLower().Contains(lowerSearch)) ||
+                    (u.Unit != null && u.Unit.Name.ToLower().Contains(lowerSearch)) ||
                     (u.TC != null && u.TC.ToLower().Contains(lowerSearch))
                 );
             }
@@ -36,8 +37,8 @@ namespace MvcBitirmeProjesi.Controllers
                 users = sortColumn switch
                 {
                     "Id" => sortDirection == "ASC" ? users.OrderBy(u => u.Id) : users.OrderByDescending(u => u.Id),
-                    "Title" => sortDirection == "ASC" ? users.OrderBy(u => u.Title) : users.OrderByDescending(u => u.Title),
-                    "Unit" => sortDirection == "ASC" ? users.OrderBy(u => u.Unit) : users.OrderByDescending(u => u.Unit),
+                    "Title" => sortDirection == "ASC" ? users.OrderBy(u => u.Role.Name) : users.OrderByDescending(u => u.Role.Name),
+                    "Unit" => sortDirection == "ASC" ? users.OrderBy(u => u.Unit.Name) : users.OrderByDescending(u => u.Unit.Name),
                     "Tc" => sortDirection == "ASC" ? users.OrderBy(u => u.TC) : users.OrderByDescending(u => u.TC),
                     "Name" => sortDirection == "ASC" ? users.OrderBy(u => u.Name) : users.OrderByDescending(u => u.Name),
                     "Surname" => sortDirection == "ASC" ? users.OrderBy(u => u.Surname) : users.OrderByDescending(u => u.Surname),

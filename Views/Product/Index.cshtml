@@ -41,7 +41,7 @@
                     <tr>
                         <td>@product.Id</td>
                         <td>@product.Name</td>
-                        <td>@product.Unit</td>
+                        <td>@product.Unit?.Name</td>
                         <td>@product.Stock</td>
                         <td>@product.Description</td>
                         <td>
@@ -52,10 +52,14 @@
                         <td>
                             <div class="btn-group">
                                 <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"
-                                    onclick="editProduct(@product.Id, '@product.Name', '@product.Unit', @product.Stock, '@product.Description')">
+                                    onclick="editProduct(@product.Id, '@product.Name', @product.Unit?.Id, @product.Stock, '@product.Description')">
                                     Düzenle
                                 </button>
-                                <a href="#" class="btn btn-sm btn-danger ms-1">Sil</a>
+                                <form method="post" asp-action="Delete" asp-controller="Product"
+                                    onsubmit="return confirm('Bu ürünü silmek istediğinize emin misiniz?');" class="ms-1">
+                                    <input type="hidden" name="id" value="@product.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -81,7 +85,13 @@
                     </div>
                     <div class="mb-3">
                         <label>Birim</label>
-                        <input type="text" class="form-control" name="Unit" required />
+                        <select class="form-select" name="UnitId" required>
+                            <option value="">Seçiniz</option>
+                            @foreach (var unit in ViewBag.Units)
+                            {
+                                <option value="@unit.Id">@unit.Name</option>
+                            }
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label>Stok</label>
@@ -117,7 +127,13 @@
                     </div>
                     <div class="mb-3">
                         <label>Birim</label>
-                        <input type="text" class="form-control" name="Unit" id="editProductUnit" />
+                        <select class="form-select" name="UnitId" id="editProductUnitId" required>
+                            <option value="">Seçiniz</option>
+                            @foreach (var unit in ViewBag.Units)
+                            {
+                                <option value="@unit.Id">@unit.Name</option>
+                            }
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label>Stok</label>
@@ -156,10 +172,10 @@
         document.getElementById("qrModalImage").src = qrSrc;
     }
 
-    function editProduct(id, name, unit, stock, description) {
+    function editProduct(id, name, unitId, stock, description) {
         document.getElementById("editProductId").value = id;
         document.getElementById("editProductName").value = name;
-        document.getElementById("editProductUnit").value = unit;
+        document.getElementById("editProductUnitId").value = unitId;
         document.getElementById("editProductStock").value = stock;
         document.getElementById("editProductDescription").value = description;
     }

@@ -40,7 +40,7 @@ namespace MvcBitirmeProjesi.Controllers
                     {
                         new Claim(ClaimTypes.Name, user.TC),
                         new Claim("FullName", user.Name + " " + user.Surname),
-                        new Claim(ClaimTypes.Role, user.Title ?? "User"),
+                        new Claim(ClaimTypes.Role, user.Role?.Name ?? "User"),
                         new Claim("UserId", user.Id.ToString())
                     };
 

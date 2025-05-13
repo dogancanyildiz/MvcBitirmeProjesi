@@ -25,7 +25,7 @@ namespace MvcBitirmeProjesi.Controllers
                 var lowerSearch = searchQuery.ToLower();
                 products = products.Where(p =>
                     (p.Name != null && p.Name.ToLower().Contains(lowerSearch)) ||
-                    (p.Unit != null && p.Unit.ToLower().Contains(lowerSearch)) ||
+                    (p.Unit != null && p.Unit.Name.ToLower().Contains(lowerSearch)) ||
                     (p.Description != null && p.Description.ToLower().Contains(lowerSearch))
                 );
             }
@@ -36,7 +36,7 @@ namespace MvcBitirmeProjesi.Controllers
                 {
                     "Id" => sortDirection == "ASC" ? products.OrderBy(p => p.Id) : products.OrderByDescending(p => p.Id),
                     "Name" => sortDirection == "ASC" ? products.OrderBy(p => p.Name) : products.OrderByDescending(p => p.Name),
-                    "Unit" => sortDirection == "ASC" ? products.OrderBy(p => p.Unit) : products.OrderByDescending(p => p.Unit),
+                    "Unit" => sortDirection == "ASC" ? products.OrderBy(p => p.Unit.Name) : products.OrderByDescending(p => p.Unit.Name),
                     "Description" => sortDirection == "ASC" ? products.OrderBy(p => p.Description) : products.OrderByDescending(p => p.Description),
                     _ => products
                 };
@@ -49,6 +49,8 @@ namespace MvcBitirmeProjesi.Controllers
             ViewBag.SortColumn = sortColumn;
             ViewBag.SortDirection = sortDirection;
             ViewBag.SearchQuery = searchQuery;
+
+            ViewBag.Units = _context.Units.ToList();
 
             var productList = products.ToList();
 
@@ -75,7 +77,7 @@ namespace MvcBitirmeProjesi.Controllers
             if (product == null) return NotFound();
 
             product.Name = updatedProduct.Name;
-            product.Unit = updatedProduct.Unit;
+            product.UnitId = updatedProduct.UnitId;
             product.Description = updatedProduct.Description;
             product.Stock = updatedProduct.Stock;
 
@@ -98,6 +100,8 @@ namespace MvcBitirmeProjesi.Controllers
             // HATA varsa burası çalışır, ViewBag olmadan Index çağrılırsa patlar
             var products = _context.Products.ToList();
 
+            ViewBag.Units = _context.Units.ToList();
+
             // QR kodları yeniden oluşturulmalı
             var qrCodes = new Dictionary<int, string>();
             using var qrGenerator = new QRCodeGenerator();
@@ -113,6 +117,18 @@ namespace MvcBitirmeProjesi.Controllers
             ViewBag.ProductQRCodes = qrCodes;
 
             return View("Index", products); // eksiksiz döndür
+        }
+
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var product = _context.Products.FirstOrDefault(p => p.Id == id);
+            if (product == null) return NotFound();
+
+            _context.Products.Remove(product);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
         }
 
     }

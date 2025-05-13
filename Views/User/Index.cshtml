@@ -30,9 +30,9 @@
                 </a>
             </th>
             <th style="text-align:right;">
-                <a href="?sortColumn=Title&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Title" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
+                <a href="?sortColumn=Role&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Role" ? "DESC" : "ASC")&searchQuery=@searchQuery" style="display:flex;justify-content:space-between;align-items:center;">
                     <span style="flex:1;text-align:left;">Title</span>
-                    <span style="flex-shrink:0;">@(currentSortColumn == "Title" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
+                    <span style="flex-shrink:0;">@(currentSortColumn == "Role" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                 </a>
             </th>
             <th style="text-align:right;">
@@ -72,8 +72,8 @@
         {
             <tr>
                 <td>@user.Id</td>
-                <td>@user.Title</td>
-                <td>@user.Unit</td>
+                <td>@user.Role?.Name</td>
+                <td>@user.Unit?.Name</td>
                 <td>@user.TC</td>
                 <td>@user.Name</td>
                 <td>@user.Surname</td>

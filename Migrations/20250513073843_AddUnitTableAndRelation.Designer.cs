@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MvcBitirmeProjesi.Data;
 
@@ -10,9 +11,11 @@ using MvcBitirmeProjesi.Data;
 namespace MvcBitirmeProjesi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250513073843_AddUnitTableAndRelation")]
+    partial class AddUnitTableAndRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.4");
@@ -76,21 +79,6 @@ namespace MvcBitirmeProjesi.Migrations
                     b.ToTable("QrLogs");
                 });
 
-            modelBuilder.Entity("MvcBitirmeProjesi.Models.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-                });
-
             modelBuilder.Entity("MvcBitirmeProjesi.Models.Unit", b =>
                 {
                     b.Property<int>("Id")
@@ -124,9 +112,6 @@ namespace MvcBitirmeProjesi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Surname")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -135,14 +120,15 @@ namespace MvcBitirmeProjesi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("UnitId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("UnitId");
 
                     b.ToTable("Users");
                 });
@@ -165,30 +151,6 @@ namespace MvcBitirmeProjesi.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MvcBitirmeProjesi.Models.User", b =>
-                {
-                    b.HasOne("MvcBitirmeProjesi.Models.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MvcBitirmeProjesi.Models.Unit", "Unit")
-                        .WithMany()
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-
-                    b.Navigation("Unit");
-                });
-
-            modelBuilder.Entity("MvcBitirmeProjesi.Models.Role", b =>
-                {
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("MvcBitirmeProjesi.Models.Unit", b =>
