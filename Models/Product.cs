@@ -7,5 +7,6 @@ namespace MvcBitirmeProjesi.Models
         public string Unit { get; set; }
         public string Description { get; set; }
         public string? QRCodeBase64 { get; set; }
+        public int Stock { get; set; }
     }
 }

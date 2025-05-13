@@ -29,6 +29,7 @@
                     <th>ID</th>
                     <th>Adı</th>
                     <th>Birim</th>
+                    <th>Stok</th>
                     <th>Açıklama</th>
                     <th>QR</th>
                     <th>İşlemler</th>
@@ -41,6 +42,7 @@
                         <td>@product.Id</td>
                         <td>@product.Name</td>
                         <td>@product.Unit</td>
+                        <td>@product.Stock</td>
                         <td>@product.Description</td>
                         <td>
                             <img src="@ViewBag.ProductQRCodes[product.Id]" alt="QR"
@@ -50,7 +52,7 @@
                         <td>
                             <div class="btn-group">
                                 <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"
-                                    onclick="editProduct(@product.Id, '@product.Name', '@product.Unit', '@product.Description')">
+                                    onclick="editProduct(@product.Id, '@product.Name', '@product.Unit', @product.Stock, '@product.Description')">
                                     Düzenle
                                 </button>
                                 <a href="#" class="btn btn-sm btn-danger ms-1">Sil</a>
@@ -80,6 +82,10 @@
                     <div class="mb-3">
                         <label>Birim</label>
                         <input type="text" class="form-control" name="Unit" required />
+                    </div>
+                    <div class="mb-3">
+                        <label>Stok</label>
+                        <input type="number" class="form-control" name="Stock" required min="0" />
                     </div>
                     <div class="mb-3">
                         <label>Açıklama</label>
@@ -114,6 +120,10 @@
                         <input type="text" class="form-control" name="Unit" id="editProductUnit" />
                     </div>
                     <div class="mb-3">
+                        <label>Stok</label>
+                        <input type="number" class="form-control" name="Stock" id="editProductStock" min="0" />
+                    </div>
+                    <div class="mb-3">
                         <label>Açıklama</label>
                         <textarea class="form-control" name="Description" id="editProductDescription"></textarea>
                     </div>
@@ -146,10 +156,11 @@
         document.getElementById("qrModalImage").src = qrSrc;
     }
 
-    function editProduct(id, name, unit, description) {
+    function editProduct(id, name, unit, stock, description) {
         document.getElementById("editProductId").value = id;
         document.getElementById("editProductName").value = name;
         document.getElementById("editProductUnit").value = unit;
+        document.getElementById("editProductStock").value = stock;
         document.getElementById("editProductDescription").value = description;
     }
 </script>

@@ -77,6 +77,7 @@ namespace MvcBitirmeProjesi.Controllers
             product.Name = updatedProduct.Name;
             product.Unit = updatedProduct.Unit;
             product.Description = updatedProduct.Description;
+            product.Stock = updatedProduct.Stock;
 
             _context.Products.Update(product);
             _context.SaveChanges();
