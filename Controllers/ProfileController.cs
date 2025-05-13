@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 using MvcBitirmeProjesi.Data;
 using MvcBitirmeProjesi.Models;
 
@@ -26,7 +27,10 @@ namespace MvcBitirmeProjesi.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            var user = _context.Users.FirstOrDefault(u => u.TC == tc);
+            var user = _context.Users
+                .Include(u => u.Role)
+                .Include(u => u.Unit)
+                .FirstOrDefault(u => u.TC == tc);
 
             if (user == null)
             {

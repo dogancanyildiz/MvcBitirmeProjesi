@@ -18,7 +18,10 @@ namespace MvcBitirmeProjesi.Controllers
 
         public IActionResult Index(string sortColumn, string sortDirection, string searchQuery)
         {
-            var users = _context.Users.AsQueryable();
+            var users = _context.Users
+                .Include(u => u.Role)
+                .Include(u => u.Unit)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
