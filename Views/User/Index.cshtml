@@ -26,49 +26,49 @@
     <thead>
         <tr>
             <th>
-                <a href="?sortColumn=Id&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Id" ? "DESC" : "ASC")&searchQuery=@searchQuery"
+                <a href="?sortColumn=Id&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Id" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
                     class="text-decoration-none d-flex justify-content-between align-items-center">
                     <span>ID</span>
                     <span>@(currentSortColumn == "Id" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                 </a>
             </th>
             <th>
-                <a href="?sortColumn=Role&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Role" ? "DESC" : "ASC")&searchQuery=@searchQuery"
+                <a href="?sortColumn=Role&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Role" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
                     class="text-decoration-none d-flex justify-content-between align-items-center">
                     <span>Rol</span>
                     <span>@(currentSortColumn == "Role" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                 </a>
             </th>
             <th>
-                <a href="?sortColumn=Unit&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Unit" ? "DESC" : "ASC")&searchQuery=@searchQuery"
+                <a href="?sortColumn=Unit&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Unit" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
                     class="text-decoration-none d-flex justify-content-between align-items-center">
                     <span>Birim</span>
                     <span>@(currentSortColumn == "Unit" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                 </a>
             </th>
             <th>
-                <a href="?sortColumn=TC&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "TC" ? "DESC" : "ASC")&searchQuery=@searchQuery"
+                <a href="?sortColumn=TC&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "TC" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
                     class="text-decoration-none d-flex justify-content-between align-items-center">
                     <span>TC</span>
                     <span>@(currentSortColumn == "TC" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                 </a>
             </th>
             <th>
-                <a href="?sortColumn=Name&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Name" ? "DESC" : "ASC")&searchQuery=@searchQuery"
+                <a href="?sortColumn=Name&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Name" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
                     class="text-decoration-none d-flex justify-content-between align-items-center">
                     <span>Ad</span>
                     <span>@(currentSortColumn == "Name" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                 </a>
             </th>
             <th>
-                <a href="?sortColumn=Surname&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Surname" ? "DESC" : "ASC")&searchQuery=@searchQuery"
+                <a href="?sortColumn=Surname&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Surname" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
                     class="text-decoration-none d-flex justify-content-between align-items-center">
                     <span>Soyad</span>
                     <span>@(currentSortColumn == "Surname" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                 </a>
             </th>
             <th>
-                <a href="?sortColumn=Phone&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Phone" ? "DESC" : "ASC")&searchQuery=@searchQuery"
+                <a href="?sortColumn=Phone&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Phone" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
                     class="text-decoration-none d-flex justify-content-between align-items-center">
                     <span>Telefon</span>
                     <span>@(currentSortColumn == "Phone" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
@@ -105,6 +105,47 @@
         }
     </tbody>
 </table>
+
+@if (totalPages > 1)
+{
+    <nav aria-label="Sayfalama">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="?page=1&sortColumn=@currentSortColumn&sortDirection=@currentSortDirection&searchQuery=@searchQuery">İlk</a>
+            </li>
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="?page=@(currentPage - 1)&sortColumn=@currentSortColumn&sortDirection=@currentSortDirection&searchQuery=@searchQuery">Önceki</a>
+            </li>
+            
+            @{
+                int startPage = Math.Max(1, currentPage - 2);
+                int endPage = Math.Min(totalPages, startPage + 4);
+                
+                if (endPage - startPage < 4 && startPage > 1)
+                {
+                    startPage = Math.Max(1, endPage - 4);
+                }
+            }
+            
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="?page=@i&sortColumn=@currentSortColumn&sortDirection=@currentSortDirection&searchQuery=@searchQuery">@i</a>
+                </li>
+            }
+            
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link" href="?page=@(currentPage + 1)&sortColumn=@currentSortColumn&sortDirection=@currentSortDirection&searchQuery=@searchQuery">Sonraki</a>
+            </li>
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link" href="?page=@totalPages&sortColumn=@currentSortColumn&sortDirection=@currentSortDirection&searchQuery=@searchQuery">Son</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="text-center text-muted">
+        <small>Toplam @ViewBag.TotalItems kullanıcı, @ViewBag.TotalPages sayfa</small>
+    </div>
+}
 
 <!-- Kullanıcı Ekle Modal -->
 <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">

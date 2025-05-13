@@ -4,6 +4,7 @@ using MvcBitirmeProjesi.Data;
 using MvcBitirmeProjesi.Models;
 using System.Linq;
 using System.Security.Claims;
+using System;
 
 namespace MvcBitirmeProjesi.Controllers
 {
@@ -16,8 +17,11 @@ namespace MvcBitirmeProjesi.Controllers
             _context = context;
         }
 
-        public IActionResult Index(string sortColumn, string sortDirection, string searchQuery)
+        public IActionResult Index(string sortColumn, string sortDirection, string searchQuery, int page = 1)
         {
+            // Sayfa boyutu - her sayfada gösterilecek kullanıcı sayısı
+            int pageSize = 10;
+            
             var users = _context.Users
                 .Include(u => u.Role)
                 .Include(u => u.Unit)
@@ -46,17 +50,34 @@ namespace MvcBitirmeProjesi.Controllers
                     "Name" => sortDirection == "ASC" ? users.OrderBy(u => u.Name) : users.OrderByDescending(u => u.Name),
                     "Surname" => sortDirection == "ASC" ? users.OrderBy(u => u.Surname) : users.OrderByDescending(u => u.Surname),
                     "Phone" => sortDirection == "ASC" ? users.OrderBy(u => u.Phone) : users.OrderByDescending(u => u.Phone),
-                    _ => users
+                    _ => users.OrderBy(u => u.Id)
                 };
             }
+            else
+            {
+                users = users.OrderBy(u => u.Id);
+            }
+
+            // Toplam kullanıcı sayısı ve toplam sayfa sayısını hesaplama
+            int totalItems = users.Count();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            
+            // Geçerli sayfa için kullanıcıları alma
+            var paginatedUsers = users
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
             ViewBag.SortColumn = sortColumn;
             ViewBag.SortDirection = sortDirection;
             ViewBag.SearchQuery = searchQuery;
-
             ViewBag.Units = _context.Units.ToList();
             ViewBag.Roles = _context.Roles.ToList();
-            return View(users.ToList());
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalItems = totalItems;
+
+            return View(paginatedUsers);
         }
 
         [HttpGet]
@@ -104,7 +125,6 @@ namespace MvcBitirmeProjesi.Controllers
             return View(user);
         }
 
-        // Yeni eklenen Update metodu
         [HttpPost]
         public IActionResult Update(User updatedUser)
         {
@@ -130,7 +150,6 @@ namespace MvcBitirmeProjesi.Controllers
             return RedirectToAction("Index");
         }
 
-        // Yeni eklenen Delete metodu
         [HttpPost]
         public IActionResult Delete(int id)
         {

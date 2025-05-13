@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MvcBitirmeProjesi.Data;
 using MvcBitirmeProjesi.Models;
 using System.Linq;
@@ -16,9 +17,14 @@ namespace MvcBitirmeProjesi.Controllers
             _context = context;
         }
 
-        public IActionResult Index(string sortColumn, string sortDirection, string searchQuery)
+        public IActionResult Index(string sortColumn, string sortDirection, string searchQuery, int page = 1)
         {
-            var products = _context.Products.AsQueryable();
+            // Sayfa boyutu - her sayfada gösterilecek ürün sayısı
+            int pageSize = 10;
+            
+            var products = _context.Products
+                .Include(p => p.Unit)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
@@ -37,8 +43,9 @@ namespace MvcBitirmeProjesi.Controllers
                     "Id" => sortDirection == "ASC" ? products.OrderBy(p => p.Id) : products.OrderByDescending(p => p.Id),
                     "Name" => sortDirection == "ASC" ? products.OrderBy(p => p.Name) : products.OrderByDescending(p => p.Name),
                     "Unit" => sortDirection == "ASC" ? products.OrderBy(p => p.Unit.Name) : products.OrderByDescending(p => p.Unit.Name),
+                    "Stock" => sortDirection == "ASC" ? products.OrderBy(p => p.Stock) : products.OrderByDescending(p => p.Stock),
                     "Description" => sortDirection == "ASC" ? products.OrderBy(p => p.Description) : products.OrderByDescending(p => p.Description),
-                    _ => products
+                    _ => products.OrderBy(p => p.Id)
                 };
             }
             else
@@ -46,28 +53,40 @@ namespace MvcBitirmeProjesi.Controllers
                 products = products.OrderBy(p => p.Id);
             }
 
+            // Toplam ürün sayısı ve toplam sayfa sayısını hesaplama
+            int totalItems = products.Count();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            
+            // Geçerli sayfa için ürünleri alma
+            var paginatedProducts = products
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // QR Codes oluşturma
+            Dictionary<int, string> qrCodes = new();
+            foreach (var product in paginatedProducts)
+            {
+                QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode($"Ürün: {product.Name}, Stok: {product.Stock}", QRCodeGenerator.ECCLevel.Q);
+                BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
+                byte[] qrCodeBytes = qrCode.GetGraphic(20);
+                string qrCodeBase64 = $"data:image/png;base64,{Convert.ToBase64String(qrCodeBytes)}";
+                qrCodes[product.Id] = qrCodeBase64;
+            }
+
+            // ViewBag'e gerekli bilgileri aktarma
+            ViewBag.ProductQRCodes = qrCodes;
             ViewBag.SortColumn = sortColumn;
             ViewBag.SortDirection = sortDirection;
             ViewBag.SearchQuery = searchQuery;
-
             ViewBag.Units = _context.Units.ToList();
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalItems = totalItems;
 
-            var productList = products.ToList();
-
-            var qrCodes = new Dictionary<int, string>();
-            using var qrGenerator = new QRCodeGenerator();
-            foreach (var product in productList)
-            {
-                var qrData = qrGenerator.CreateQrCode(product.Id.ToString(), QRCodeGenerator.ECCLevel.Q);
-                var svgQr = new SvgQRCode(qrData);
-                var svgImage = svgQr.GetGraphic(5); // küçük QR boyutu
-                var base64Svg = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(svgImage));
-                qrCodes[product.Id] = $"data:image/svg+xml;base64,{base64Svg}";
-            }
-
-            ViewBag.ProductQRCodes = qrCodes;
-
-            return View(productList);
+            return View(paginatedProducts);
         }
 
         [HttpPost]
