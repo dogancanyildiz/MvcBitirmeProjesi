@@ -12,6 +12,7 @@ namespace MvcBitirmeProjesi.Data
         public DbSet<Unit> Units { get; set; }
         public DbSet<QrLog> QrLogs { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<ProductTransferLog> ProductTransferLogs { get; set; }
     }
 }
 

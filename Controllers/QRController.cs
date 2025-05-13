@@ -6,6 +6,7 @@ using MvcBitirmeProjesi.Data;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace MvcBitirmeProjesi.Controllers
 {
@@ -92,6 +93,39 @@ namespace MvcBitirmeProjesi.Controllers
 
             _context.SaveChanges();
             return Ok("QR kaydı başarılı.");
+        }
+
+        [HttpPost]
+        public IActionResult TransferProduct(int productId, int miktar)
+        {
+            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+
+            int userId = int.Parse(userIdStr);
+            var user = _context.Users.Include(u => u.Unit).FirstOrDefault(x => x.Id == userId);
+            var product = _context.Products.Include(p => p.Unit).FirstOrDefault(p => p.Id == productId);
+
+            if (user == null || product == null || miktar <= 0)
+            {
+                return BadRequest("Geçersiz işlem.");
+            }
+
+            // LOG oluştur
+            var log = new ProductTransferLog
+            {
+                ProductId = product.Id,
+                UserId = user.Id,
+                Miktar = miktar,
+                TransferTarihi = DateTime.Now
+            };
+
+            // ürün birimi değiştir
+            product.UnitId = user.UnitId;
+
+            _context.ProductTransferLogs.Add(log);
+            _context.SaveChanges();
+
+            return Json(new { success = true });
         }
     }
 }

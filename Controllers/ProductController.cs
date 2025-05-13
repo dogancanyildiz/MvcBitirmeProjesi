@@ -21,7 +21,7 @@ namespace MvcBitirmeProjesi.Controllers
         {
             // Sayfa boyutu - her sayfada gösterilecek ürün sayısı
             int pageSize = 10;
-            
+
             var products = _context.Products
                 .Include(p => p.Unit)
                 .AsQueryable();
@@ -56,7 +56,7 @@ namespace MvcBitirmeProjesi.Controllers
             // Toplam ürün sayısı ve toplam sayfa sayısını hesaplama
             int totalItems = products.Count();
             int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
-            
+
             // Geçerli sayfa için ürünleri alma
             var paginatedProducts = products
                 .Skip((page - 1) * pageSize)
@@ -68,7 +68,7 @@ namespace MvcBitirmeProjesi.Controllers
             foreach (var product in paginatedProducts)
             {
                 QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                QRCodeData qrCodeData = qrGenerator.CreateQrCode($"Ürün: {product.Name}, Stok: {product.Stock}", QRCodeGenerator.ECCLevel.Q);
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(product.Id.ToString(), QRCodeGenerator.ECCLevel.Q);
                 BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
                 byte[] qrCodeBytes = qrCode.GetGraphic(20);
                 string qrCodeBase64 = $"data:image/png;base64,{Convert.ToBase64String(qrCodeBytes)}";
@@ -148,6 +148,28 @@ namespace MvcBitirmeProjesi.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Details(int id)
+        {
+            var product = _context.Products.FirstOrDefault(p => p.Id == id);
+            if (product == null) return NotFound();
+
+            // QR görseli base64 olarak oluşturuluyor
+            var qrGenerator = new QRCodeGenerator();
+            var qrCodeData = qrGenerator.CreateQrCode(product.Id.ToString(), QRCodeGenerator.ECCLevel.Q);
+            var qrCode = new BitmapByteQRCode(qrCodeData);
+            var qrCodeBytes = qrCode.GetGraphic(20);
+            var qrCodeBase64 = $"data:image/png;base64,{Convert.ToBase64String(qrCodeBytes)}";
+
+            return Json(new
+            {
+                id = product.Id,
+                name = product.Name,
+                description = product.Description,
+                stock = product.Stock,
+                qrCode = qrCodeBase64
+            });
         }
 
     }
