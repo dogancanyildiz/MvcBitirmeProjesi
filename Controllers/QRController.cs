@@ -111,6 +111,14 @@ namespace MvcBitirmeProjesi.Controllers
                 return BadRequest("Geçersiz işlem.");
             }
 
+            if (product.Stock < miktar)
+            {
+                return BadRequest("Yetersiz stok.");
+            }
+
+            // Stoktan düş
+            product.Stock -= miktar;
+
             // LOG oluştur
             var log = new ProductTransferLog
             {
@@ -120,7 +128,7 @@ namespace MvcBitirmeProjesi.Controllers
                 TransferTarihi = DateTime.Now
             };
 
-            // ürün birimi değiştir
+            // ürün birimini güncelle
             product.UnitId = user.UnitId;
 
             _context.ProductTransferLogs.Add(log);

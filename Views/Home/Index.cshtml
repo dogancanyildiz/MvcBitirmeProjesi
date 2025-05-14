@@ -2,125 +2,251 @@
     ViewData["Title"] = "Ana Sayfa";
 }
 
-<div class="container mt-5 text-center">
-    <h1 class="display-3">Bitirme Projesi - ASP.NET Core MVC</h1>
-    <p class="fw-semibold">Bu proje; Visual Studio 2022, Visual Studio Code ve ASP.NET Core 9.0 kullanılarak
-        geliştirilmiştir.</p>
-
-    <!-- Carousel -->
-    <div id="welcomeCarousel" class="carousel slide bg-light p-5 rounded mt-5" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <h2>Projeye Hoş Geldiniz!</h2>
-                <p>Bitirme projesi kapsamında geliştirilen uygulamaya hoş geldiniz.</p>
-            </div>
-            <div class="carousel-item">
-                <h2>Yeni Özellikler!</h2>
-                <p>Yakında kullanıcılar için yeni özellikler eklenecek.</p>
-            </div>
-            <div class="carousel-item">
-                <h2>Güncellemeler</h2>
-                <p>ASP.NET Core 9.0 teknolojisiyle en güncel yapıyı kullanıyoruz.</p>
+<div class="container mt-4">
+    <!-- Hero Section -->
+    <div class="row align-items-center py-4 mb-5 bg-light rounded shadow-sm">
+        <div class="col-lg-6 text-center text-lg-start ps-lg-5">
+            <h1 class="display-4 fw-bold text-primary mb-3">Stok Takip & Personel Yönetim Sistemi</h1>
+            <p class="lead mb-4">QR kod teknolojisiyle geliştirilmiş, modern ve kullanıcı dostu arayüzle stok ve personel takibini kolaylaştırın.</p>
+            <div class="d-flex flex-wrap justify-content-center justify-content-lg-start gap-2">
+                <a href="/QR/Scan" class="btn btn-primary btn-lg px-4">
+                    <i class="fas fa-qrcode me-2"></i> QR Tara
+                </a>
+                <a href="/Product" class="btn btn-outline-primary btn-lg px-4">
+                    <i class="fas fa-boxes me-2"></i> Stok Yönetimi
+                </a>
             </div>
         </div>
-        <button class="carousel-control-prev bg-dark rounded-circle" type="button" data-bs-target="#welcomeCarousel"
-            data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Önceki</span>
-        </button>
-        <button class="carousel-control-next bg-dark rounded-circle" type="button" data-bs-target="#welcomeCarousel"
-            data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Sonraki</span>
-        </button>
-    </div>
-
-    <!-- Saat Bilgileri Kartı -->
-    <div class="mt-5 text-center">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title"> Saat</h5>
-                <h3 id="clock" class="display-4 text-primary"></h3> <!-- Mavi renk burada -->
-            </div>
+        <div class="col-lg-6 mt-4 mt-lg-0 text-center">
+            <img src="https://cdn.pixabay.com/photo/2020/06/08/16/19/barcode-5275290_1280.png" class="img-fluid rounded shadow" alt="QR Kod İllüstrasyonu" style="max-height: 300px;">
         </div>
-        <script>
-            setInterval(() => {
-                document.getElementById("clock").innerText = new Date().toLocaleTimeString();
-            }, 1000);
-        </script>
     </div>
 
-
-    <!-- Bilgilendirme Kartları -->
-    <div class="row mt-5">
-        <div class="col-md-4">
-            <div class="card shadow-sm">
+    <!-- Canlı Bilgiler ve Saat -->
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100 border-0">
                 <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-clock text-primary me-2"></i> Anlık Bilgiler
+                        </h4>
+                        <span class="badge bg-success">Online</span>
+                    </div>
+                    <div class="text-center py-3">
+                        <h2 id="clock" class="display-5 text-primary mb-0"></h2>
+                        <p id="date" class="text-muted"></p>
+                        <div class="d-flex justify-content-center gap-4 mt-3">
+                            <div>
+                                <h5 class="mb-0" id="activeUsers">--</h5>
+                                <small class="text-muted">Aktif Kullanıcı</small>
+                            </div>
+                            <div>
+                                <h5 class="mb-0" id="totalTransfers">--</h5>
+                                <small class="text-muted">Bugünkü Transfer</small>
+                            </div>
+                            <div>
+                                <h5 class="mb-0" id="totalScans">--</h5>
+                                <small class="text-muted">QR Tarama</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mt-3 mt-md-0">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-bullhorn text-primary me-2"></i> Duyurular
+                        </h4>
+                        <span class="badge bg-danger">Yeni</span>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex align-items-center border-0 py-3">
+                            <span class="badge bg-primary rounded-pill me-3">
+                                <i class="fas fa-calendar-day"></i>
+                            </span>
+                            <div>
+                                <strong>19 Mayıs Resmi Tatili</strong>
+                                <p class="text-muted mb-0 small">19 Mayıs günü Gençlik ve Spor Bayramı nedeniyle işyerimiz kapalıdır.</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center border-0 py-3">
+                            <span class="badge bg-info rounded-pill me-3">
+                                <i class="fas fa-sync-alt"></i>
+                            </span>
+                            <div>
+                                <strong>Yeni Vardiya Sistemi</strong>
+                                <p class="text-muted mb-0 small">1 Haziran'da başlayacak yeni vardiya sistemi için tüm personel bilgilendirilecektir.</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center border-0 py-3">
+                            <span class="badge bg-success rounded-pill me-3">
+                                <i class="fas fa-mosque"></i>
+                            </span>
+                            <div>
+                                <strong>Kurban Bayramı Tatili</strong>
+                                <p class="text-muted mb-0 small">5-9 Haziran tarihlerinde Kurban Bayramı nedeniyle tatil yapılacaktır. Şimdiden bayramınız mübarek olsun.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Özellikler -->
+    <h3 class="text-center mb-4">
+        <i class="fas fa-star text-warning me-2"></i>
+        Sistem Özellikleri
+    </h3>
+    <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0 bg-light">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon bg-primary text-white rounded-circle mx-auto mb-3">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
                     <h5 class="card-title">QR Kod ile Giriş</h5>
-                    <p class="card-text">Personeller QR kodlarını okutarak sisteme hızlı giriş sağlar.</p>
+                    <p class="card-text">Personeller QR kodlarını okutarak sisteme hızlı giriş sağlar, giriş-çıkış süreleri otomatik kaydedilir.</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0 bg-light">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon bg-success text-white rounded-circle mx-auto mb-3">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
                     <h5 class="card-title">Gerçek Zamanlı Takip</h5>
-                    <p class="card-text">Fabrikadaki personel hareketleri anlık olarak izlenebilir.</p>
+                    <p class="card-text">Fabrikadaki personel hareketleri ve stok transferleri anlık olarak izlenebilir ve raporlanabilir.</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm">
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0 bg-light">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon bg-info text-white rounded-circle mx-auto mb-3">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h5 class="card-title">Detaylı Raporlama</h5>
+                    <p class="card-text">Giriş-çıkış verileri ve stok transferleri detaylı rapor olarak alınabilir, filtrelenebilir ve dışa aktarılabilir.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hızlı Erişim ve Harita -->
+    <div class="row mb-5">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <h5 class="card-title">Raporlama</h5>
-                    <p class="card-text">Giriş-çıkış verileri detaylı rapor olarak alınabilir.</p>
+                    <h4 class="card-title mb-3">
+                        <i class="fas fa-link text-primary me-2"></i>
+                        Hızlı Erişim
+                    </h4>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <a href="/User" class="btn btn-light border w-100 py-3 d-flex flex-column align-items-center">
+                                <i class="fas fa-users fa-2x mb-2 text-primary"></i>
+                                <span>Personel Yönetimi</span>
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="/QR/Scan" class="btn btn-light border w-100 py-3 d-flex flex-column align-items-center">
+                                <i class="fas fa-qrcode fa-2x mb-2 text-success"></i>
+                                <span>QR Kod Tarama</span>
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="/QR/Logs" class="btn btn-light border w-100 py-3 d-flex flex-column align-items-center">
+                                <i class="fas fa-history fa-2x mb-2 text-info"></i>
+                                <span>Giriş/Çıkış Kayıtları</span>
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="/QR/TransferLogs" class="btn btn-light border w-100 py-3 d-flex flex-column align-items-center">
+                                <i class="fas fa-exchange-alt fa-2x mb-2 text-warning"></i>
+                                <span>Transfer Kayıtları</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">
+                        <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                        Fabrika Konumu
+                    </h4>
+                    <div class="ratio ratio-16x9 shadow-sm rounded">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3058.832493185379!2d32.85405121540046!3d39.92077097942501!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14d34fc25e9c59b5%3A0x4fb542f7762c07f2!2sAnkara!5e0!3m2!1str!2str!4v1652378279409"
+                            style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Duyurular -->
-    <div class="mt-5">
-        <h4>Duyurular</h4>
-        <ul class="list-group">
-            <li class="list-group-item d-flex align-items-center bg-primary text-white">
-                <i class="bi bi-calendar-check me-3 text-light"></i>
-                <span>19 Mayıs günü resmî tatildir.</span>
-            </li>
-            <li class="list-group-item d-flex align-items-center bg-primary text-white">
-                <i class="bi bi-calendar-event me-3 text-light"></i>
-                <span>Yeni vardiya sistemi 1 Haziran'da başlıyor.</span>
-            </li>
-            <li class="list-group-item d-flex align-items-center bg-primary text-white">
-                <i class="bi bi-megaphone me-3 text-light"></i>
-                <span>Ankara'da yeni fabrikada işbirliği duyurusu yapıldı.</span>
-            </li>
-            <li class="list-group-item d-flex align-items-center bg-primary text-white">
-                <i class="bi bi-calendar-check me-3 text-light"></i>
-                <span>Kurban bayramı resmî tatili 5-9 Haziran arasındadır. Kurban bayramınız mübarek olsun!</span>
-            </li>
-        </ul>
-    </div>
-
-
-    <!-- Hızlı Erişim Butonları -->
-    <div class="d-flex justify-content-center gap-3 mt-5">
-        <a href="/User" class="btn btn-outline-success">Yeni Personel Ekle</a>
-        <a href="/QR" class="btn btn-outline-primary">QR Kod Oku</a>
-        <a href="/QR/Logs" class="btn btn-outline-dark">LOG Kayıt</a>
-    </div>
-
-    <!-- Harita Konumu -->
-    <div class="mt-5 d-flex justify-content-center">
-        <div style="max-width: 480px; width: 100%;">
-            <h3 class="text-center">Fabrika Konumu</h3>
-            <div class="ratio ratio-16x9 shadow rounded">
-                <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3058.832493185379!2d32.85405121540046!3d39.92077097942501!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14d34fc25e9c59b5%3A0x4fb542f7762c07f2!2sAnkara!5e0!3m2!1str!2str!4v1652378279409"
-                    style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
-            </div>
-        </div>
-    </div>
-
 </div>
+
+@section Scripts {
+    <script>
+        // Saat ve tarih güncelleme
+        function updateClock() {
+            const now = new Date();
+            document.getElementById("clock").innerText = now.toLocaleTimeString();
+            document.getElementById("date").innerText = now.toLocaleDateString('tr-TR', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+        
+        // Demo sayılar için
+        function updateDemoStats() {
+            // Gerçek uygulamada bu değerler API'den alınabilir
+            document.getElementById("activeUsers").innerText = Math.floor(Math.random() * 20) + 5;
+            document.getElementById("totalTransfers").innerText = Math.floor(Math.random() * 50) + 10;
+            document.getElementById("totalScans").innerText = Math.floor(Math.random() * 100) + 30;
+        }
+        
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            // Font Awesome kontrolü
+            if (!document.querySelector('link[href*="font-awesome"]')) {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+                document.head.appendChild(link);
+            }
+            
+            // İlk güncellemeler
+            updateClock();
+            updateDemoStats();
+            
+            // Zamanlayıcılar
+            setInterval(updateClock, 1000);
+            setInterval(updateDemoStats, 30000); // 30 saniyede bir demo istatistikleri güncelle
+            
+            // Özellik ikonları için stil
+            const featureIcons = document.querySelectorAll('.feature-icon');
+            featureIcons.forEach(icon => {
+                icon.style.width = '60px';
+                icon.style.height = '60px';
+                icon.style.display = 'flex';
+                icon.style.alignItems = 'center';
+                icon.style.justifyContent = 'center';
+                icon.style.fontSize = '24px';
+            });
+        });
+    </script>
+}
