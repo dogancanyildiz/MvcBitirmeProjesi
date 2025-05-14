@@ -37,9 +37,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();       // Statik dosyalar (CSS, JS vs.)
 
 app.UseRouting();
-app.UseSession();           // 👈 Session burada olmalı
-app.UseAuthentication();    // 👈 Login kontrolü
-app.UseAuthorization();     // 👈 Yetki kontrolü
+app.UseSession();           //  Session burada olmalı
+app.UseAuthentication();    //  Login kontrolü
+app.UseAuthorization();     //  Yetki kontrolü
 
 // Route ayarları
 app.MapControllerRoute(
