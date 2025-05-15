@@ -1,0 +1,175 @@
+// 📌 Models/News.cs - Haberler Modeli (Veritabanı tablosu)
+// 📌 Bu sınıf, haberleri saklamak için kullanılır. Haber ID, başlık, içerik ve yayınlanma tarihi içerir.
+public class News
+{
+    public int Id { get; set; } // ✅ Haber ID (Primary Key)
+    public string Title { get; set; } // ✅ Haber Başlığı
+    public string Content { get; set; } // ✅ Haber İçeriği
+    public DateTime PublishedDate { get; set; } // ✅ Yayınlanma Tarihi
+}
+
+// 📌 Data/ApplicationDbContext.cs - Veritabanı bağlantısı
+// 📌 Haberler tablosunu veritabanına eklemek için DbSet kullanılır.
+public DbSet<News> News { get; set; }
+
+// 📌 Controllers/HomeController.cs - Ana sayfada haberleri göstermek için Controller
+// 📌 En güncel haberler sıralanarak ViewBag ile sayfaya gönderilir.
+public IActionResult Index()
+{
+    var newsList = _context.News
+        .OrderByDescending(n => n.PublishedDate) // ✅ En güncel haberleri önce getir
+        .Take(5) // ✅ Sadece 5 haber göster
+        .ToList();
+
+    ViewBag.NewsList = newsList; // ✅ Haberleri View'e gönder
+    return View();
+}
+
+// 📌 Views/Home/Index.cshtml - Ana sayfada haberleri listeleme
+<!-- 📌 Ana sayfada en son haberleri listeleyen HTML kodu. -->
+<!-- 📌 Haberlerin başlığı, içeriği ve yayınlanma tarihi gösterilir. -->
+<h2 class="mb-4">Son Haberler</h2>
+
+@if (ViewBag.NewsList != null && ViewBag.NewsList.Count > 0)
+{
+    <ul class="list-group">
+        @foreach (var news in ViewBag.NewsList)
+        {
+            <li class="list-group-item">
+                <h4>@news.Title</h4>
+                <p>@news.Content</p>
+                <small class="text-muted">@news.PublishedDate.ToString("dd.MM.yyyy HH:mm")</small>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p class="text-center text-muted">Henüz haber bulunmamaktadır.</p>
+}
+
+// 📌 Controllers/NewsController.cs - Adminlerin haber ekleyebildiği Controller
+// 📌 Haber ekleme işlemi doğrulandıktan sonra veritabanına kaydedilir.
+[Authorize(Roles = "Admin")] // ✅ Sadece Admin erişebilir
+public IActionResult AddNews()
+{
+    return View();
+}
+
+[HttpPost]
+[Authorize(Roles = "Admin")] // ✅ Sadece Admin ekleyebilir
+public IActionResult AddNews(News newNews)
+{
+    if (ModelState.IsValid)
+    {
+        _context.News.Add(newNews);
+        _context.SaveChanges();
+        return RedirectToAction("Index"); // ✅ Ana sayfaya yönlendir
+    }
+    return View(newNews);
+}
+
+// 📌 Views/News/AddNews.cshtml - Admin panelinde haber ekleme formu
+<!-- 📌 Yeni haber ekleme formu. -->
+<!-- 📌 Adminler, başlık ve içerik girerek haber ekleyebilir. -->
+<form method="post" asp-action="AddNews">
+    <div class="mb-3">
+        <label for="Title" class="form-label">Başlık</label>
+        <input type="text" class="form-control" id="Title" name="Title" required />
+    </div>
+    <div class="mb-3">
+        <label for="Content" class="form-label">İçerik</label>
+        <textarea class="form-control" id="Content" name="Content" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Haber Ekle</button>
+</form>
+
+
+// 📌 Models/User.cs - Kullanıcı Modeli (Veritabanı tablosu)
+// 📌 Kullanıcı bilgilerini tutar ve maaş hesaplaması için saatlik ücret eklenmiştir.
+public class User
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Surname { get; set; }
+    public string TC { get; set; }
+    public string Phone { get; set; }
+    public int UnitId { get; set; }
+    public int RoleId { get; set; }
+    public decimal HourlyRate { get; set; } // ✅ Kullanıcının saatlik maaşı
+}
+
+// 📌 Controllers/QRController.cs - Kullanıcının çalışma sürelerinden maaş hesaplama
+// 📌 Kullanıcının QR giriş çıkış loglarına bakarak maaş hesaplar.
+public decimal CalculateSalary(int userId)
+{
+    var logs = _context.QrLogs
+        .Where(log => log.UserId == userId && log.GecenSure.HasValue) // ✅ Kullanıcının çalışma sürelerini al
+        .ToList();
+
+    var totalWorkedHours = logs.Sum(log => log.GecenSure.Value.TotalHours); // ✅ Toplam çalışma saatini hesapla
+    var user = _context.Users.FirstOrDefault(u => u.Id == userId); // ✅ Kullanıcının saatlik ücretini al
+
+    if (user == null) return 0; // Kullanıcı bulunamazsa maaş hesaplanamaz
+
+    return totalWorkedHours * user.HourlyRate; // ✅ Toplam saat * saatlik ücret
+}
+
+// 📌 Controllers/ProfileController.cs - Kullanıcının maaş bilgisini profilde gösterme
+// 📌 Kullanıcının maaşını hesaplar ve ViewBag üzerinden sayfaya gönderir.
+public IActionResult Salary()
+{
+    var userId = User.FindFirst("UserId")?.Value;
+    if (userId == null) return Unauthorized(); // Kullanıcı oturum açmamışsa izin verme
+
+    var salary = CalculateSalary(int.Parse(userId)); // ✅ Maaşı hesapla
+    ViewBag.Salary = salary;
+    return View();
+}
+
+// 📌 Views/Profile/Profile.cshtml - Kullanıcının profil sayfasına maaş bilgisi ekleme
+<!-- 📌 Kullanıcının maaş bilgisini profilinde görüntüler. -->
+<!-- 📌 Maaş hesaplanarak TL cinsinden gösterilir. -->
+<div class="info-item p-3 bg-light rounded shadow-sm">
+    <p class="text-muted mb-1 small">
+        <i class="fas fa-dollar-sign me-1"></i> Maaş
+    </p>
+    <p class="fw-bold mb-0 fs-5">@ViewBag.Salary.ToString("N2") ₺</p> <!-- ✅ Maaş bilgisi TL cinsinden gösterilir -->
+</div>
+
+// 📌 Controllers/AdminController.cs - Admin panelinde toplu maaş raporu görüntüleme
+// 📌 Adminler tüm çalışanların maaşlarını görebilir.
+[Authorize(Roles = "Admin")] // ✅ Sadece Admin erişebilir
+public IActionResult SalaryReport()
+{
+    var salaries = _context.Users.Select(user => new
+    {
+        user.Name,
+        user.Surname,
+        TotalSalary = CalculateSalary(user.Id)
+    }).ToList();
+
+    ViewBag.Salaries = salaries;
+    return View();
+}
+
+// 📌 Views/Admin/SalaryReport.cshtml - Admin panelinde toplu maaş raporu görüntüleme
+<!-- 📌 Adminlerin çalışanların maaşlarını toplu olarak görebilmesini sağlar. -->
+<h2 class="mb-4">Maaş Raporu</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Ad Soyad</th>
+            <th>Toplam Maaş</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var salary in ViewBag.Salaries)
+        {
+            <tr>
+                <td>@salary.Name @salary.Surname</td>
+                <td>@salary.TotalSalary.ToString("N2") ₺</td>
+            </tr>
+        }
+    </tbody>
+</table>
