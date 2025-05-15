@@ -29,14 +29,98 @@ namespace MvcBitirmeProjesi.Controllers
             return View();
         }
 
-        public IActionResult Logs()
+        public IActionResult Logs(string sortColumn, string sortDirection, string searchQuery, int page = 1)
         {
-            var logs = _context.QrLogs
-                .Include(x => x.User)
-                .OrderByDescending(x => x.GirisZamani)
-                .ToList();
+            int pageSize = 10;
 
-            return View(logs);
+            var query = _context.QrLogs
+                .Include(x => x.User)
+                .ThenInclude(u => u.Unit)
+                .AsQueryable();
+
+            // Arama sorgusu uygulanıyor
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                query = query.Where(l =>
+                    l.User.Name.Contains(searchQuery) ||
+                    l.User.Surname.Contains(searchQuery) ||
+                    (l.User.Unit.Name != null && l.User.Unit.Name.Contains(searchQuery)));
+            }
+
+            // GecenSure'ye göre sıralama özel işlem gerektirir
+            bool isGecenSureSorting = sortColumn == "GecenSure";
+
+            if (!isGecenSureSorting)
+            {
+                // Normal sıralama
+                query = ApplySortingForLogs(query, sortColumn, sortDirection);
+
+                // Sayfalama için toplam öğe sayısı
+                var totalItems = query.Count();
+                var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+                // Sayfalama
+                var items = query
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                ViewBag.CurrentPage = page;
+                ViewBag.TotalPages = totalPages;
+                ViewBag.TotalItems = totalItems;
+                ViewBag.SortColumn = sortColumn;
+                ViewBag.SortDirection = sortDirection;
+                ViewBag.SearchQuery = searchQuery;
+
+                return View(items);
+            }
+            else
+            {
+                // GecenSure'ye göre sıralama için tüm verileri belleğe alıp client tarafında sıralama yapıyoruz
+                var allItems = query.ToList();
+
+                // Client tarafında sıralama
+                if (sortDirection == "ASC")
+                    allItems = allItems.OrderBy(l => l.GecenSure == null ? TimeSpan.MaxValue : l.GecenSure.Value).ToList();
+                else
+                    allItems = allItems.OrderByDescending(l => l.GecenSure == null ? TimeSpan.MinValue : l.GecenSure.Value).ToList();
+
+                // Toplam öğe sayısı ve sayfalama
+                var totalItems = allItems.Count;
+                var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+                // Sayfalama
+                var items = allItems
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                ViewBag.CurrentPage = page;
+                ViewBag.TotalPages = totalPages;
+                ViewBag.TotalItems = totalItems;
+                ViewBag.SortColumn = sortColumn;
+                ViewBag.SortDirection = sortDirection;
+                ViewBag.SearchQuery = searchQuery;
+
+                return View(items);
+            }
+        }
+
+        // QR logları için sıralama metodu (GecenSure hariç)
+        private IQueryable<QrLog> ApplySortingForLogs(IQueryable<QrLog> query, string sortColumn, string sortDirection)
+        {
+            switch (sortColumn)
+            {
+                case "Id":
+                    return sortDirection == "ASC" ? query.OrderBy(l => l.Id) : query.OrderByDescending(l => l.Id);
+                case "User":
+                    return sortDirection == "ASC" ? query.OrderBy(l => l.User.Name).ThenBy(l => l.User.Surname) : query.OrderByDescending(l => l.User.Name).ThenByDescending(l => l.User.Surname);
+                case "CikisZamani":
+                    return sortDirection == "ASC" ? query.OrderBy(l => l.CikisZamani) : query.OrderByDescending(l => l.CikisZamani);
+                case "GirisZamani":
+                default:
+                    return sortDirection == "ASC" ? query.OrderBy(l => l.GirisZamani) : query.OrderByDescending(l => l.GirisZamani);
+            }
         }
 
         [HttpGet]
@@ -137,15 +221,68 @@ namespace MvcBitirmeProjesi.Controllers
             return Json(new { success = true });
         }
 
-        public IActionResult TransferLogs()
+        public IActionResult TransferLogs(string sortColumn, string sortDirection, string searchQuery, int page = 1)
         {
-            var logs = _context.ProductTransferLogs
+            int pageSize = 10; // Sayfa başına öğe sayısı
+
+            var query = _context.ProductTransferLogs
                 .Include(x => x.Product)
-                .Include(x => x.User).ThenInclude(u => u.Unit)
-                .OrderByDescending(x => x.TransferTarihi)
+                .Include(x => x.User)
+                .ThenInclude(u => u.Unit)
+                .AsQueryable();
+
+            // Arama sorgusu uygulanıyor
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                query = query.Where(p =>
+                    p.Product.Name.Contains(searchQuery) ||
+                    p.User.Name.Contains(searchQuery) ||
+                    p.User.Surname.Contains(searchQuery) ||
+                    (p.User.Unit.Name != null && p.User.Unit.Name.Contains(searchQuery)));
+            }
+
+            // Sıralama
+            query = ApplySorting(query, sortColumn, sortDirection);
+
+            // Sayfalama için toplam öğe sayısı
+            var totalItems = query.Count();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            // Sayfalama
+            var items = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
 
-            return View(logs);
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.SortColumn = sortColumn;
+            ViewBag.SortDirection = sortDirection;
+            ViewBag.SearchQuery = searchQuery;
+
+            return View(items);
+        }
+
+        // Sıralama mantığını ayrı bir metoda aldık
+        private IQueryable<ProductTransferLog> ApplySorting(IQueryable<ProductTransferLog> query, string sortColumn, string sortDirection)
+        {
+            switch (sortColumn)
+            {
+                case "Product":
+                    return sortDirection == "ASC" ? query.OrderBy(p => p.Product.Name) : query.OrderByDescending(p => p.Product.Name);
+                case "Miktar":
+                    return sortDirection == "ASC" ? query.OrderBy(p => p.Miktar) : query.OrderByDescending(p => p.Miktar);
+                case "User":
+                    return sortDirection == "ASC" ? query.OrderBy(p => p.User.Name).ThenBy(p => p.User.Surname) : query.OrderByDescending(p => p.User.Name).ThenByDescending(p => p.User.Surname);
+                case "Unit":
+                    return sortDirection == "ASC" ? query.OrderBy(p => p.User.Unit.Name) : query.OrderByDescending(p => p.User.Unit.Name);
+                case "Id":
+                    return sortDirection == "ASC" ? query.OrderBy(p => p.Id) : query.OrderByDescending(p => p.Id);
+                case "TransferTarihi":
+                default:
+                    return sortDirection == "ASC" ? query.OrderBy(p => p.TransferTarihi) : query.OrderByDescending(p => p.TransferTarihi);
+            }
         }
     }
 }

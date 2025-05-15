@@ -2,12 +2,12 @@
 
 @{
     ViewBag.Title = "QR Giriş/Çıkış Kayıtları";
-    var currentSortDirection = ViewBag.SortDirection as string ?? "DESC";
-    var nextSortDirection = currentSortDirection == "ASC" ? "DESC" : "ASC";
-    var currentSortColumn = ViewBag.SortColumn as string ?? "GirisZamani";
+    var currentSortDirection = ViewBag.SortDirection as string ?? "ASC";
+    var currentSortColumn = ViewBag.SortColumn as string ?? ""; // Boş string kullanıyoruz
     var searchQuery = ViewBag.SearchQuery as string ?? "";
     var currentPage = ViewBag.CurrentPage ?? 1;
     var totalPages = ViewBag.TotalPages ?? 1;
+    var pageSize = 10; // Her sayfada 10 kayıt gösterileceğini belirtiyoruz
 }
 
 <h2 class="mb-4">QR Giriş/Çıkış Kayıtları</h2>
@@ -29,21 +29,21 @@
         <thead>
             <tr>
                 <th>
-                    <a href="?sortColumn=Id&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "Id" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
+                    <a href="?sortColumn=Id&sortDirection=@(currentSortColumn == "Id" && currentSortDirection == "ASC" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
                         class="text-decoration-none d-flex justify-content-between align-items-center">
                         <span>#</span>
                         <span>@(currentSortColumn == "Id" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                     </a>
                 </th>
                 <th>
-                    <a href="?sortColumn=User&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "User" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
+                    <a href="?sortColumn=User&sortDirection=@(currentSortColumn == "User" && currentSortDirection == "ASC" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
                         class="text-decoration-none d-flex justify-content-between align-items-center">
                         <span>Ad Soyad</span>
                         <span>@(currentSortColumn == "User" ? (currentSortDirection == "ASC" ? "▲" : "▼") : "")</span>
                     </a>
                 </th>
                 <th>
-                    <a href="?sortColumn=GirisZamani&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "GirisZamani" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
+                    <a href="?sortColumn=GirisZamani&sortDirection=@(currentSortColumn == "GirisZamani" && currentSortDirection == "ASC" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
                         class="text-decoration-none d-flex justify-content-between align-items-center">
                         <span>Giriş Zamanı</span>
                         <span>@(currentSortColumn == "GirisZamani" ? (currentSortDirection == "ASC" ? "▲" : "▼") :
@@ -51,7 +51,7 @@
                     </a>
                 </th>
                 <th>
-                    <a href="?sortColumn=CikisZamani&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "CikisZamani" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
+                    <a href="?sortColumn=CikisZamani&sortDirection=@(currentSortColumn == "CikisZamani" && currentSortDirection == "ASC" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
                         class="text-decoration-none d-flex justify-content-between align-items-center">
                         <span>Çıkış Zamanı</span>
                         <span>@(currentSortColumn == "CikisZamani" ? (currentSortDirection == "ASC" ? "▲" : "▼") :
@@ -59,7 +59,7 @@
                     </a>
                 </th>
                 <th>
-                    <a href="?sortColumn=GecenSure&sortDirection=@(currentSortDirection == "ASC" && currentSortColumn == "GecenSure" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
+                    <a href="?sortColumn=GecenSure&sortDirection=@(currentSortColumn == "GecenSure" && currentSortDirection == "ASC" ? "DESC" : "ASC")&searchQuery=@searchQuery&page=@currentPage"
                         class="text-decoration-none d-flex justify-content-between align-items-center">
                         <span>Geçen Süre</span>
                         <span>@(currentSortColumn == "GecenSure" ? (currentSortDirection == "ASC" ? "▲" : "▼") :
@@ -141,7 +141,15 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Tooltip etkinleştirme (gerekirse)
+            // Font Awesome kontrolü
+            if (!document.querySelector('link[href*="font-awesome"]')) {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+                document.head.appendChild(link);
+            }
+
+            // Tooltip etkinleştirme
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl)
